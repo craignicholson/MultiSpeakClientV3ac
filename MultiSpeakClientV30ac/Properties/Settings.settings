@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MultiSpeakClientV30ac.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MultiSpeakClientV30ac_proxyMDM3ac_MDM_Server" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:55273/MDM_Server.asmx</Value>
+    </Setting>
+    <Setting Name="MultiSpeakClientV30ac_proxyMR3ac_MR_Server" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:55273/MR_Server.asmx</Value>
+    </Setting>
+    <Setting Name="MultiSpeakClientV30ac_proxyOA3ac_OA_Server" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:55273/OA_Server.asmx</Value>
+    </Setting>
+    <Setting Name="MultiSpeakClientV30ac_proxyCB3ac_CB_Server" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:55273/CB_Server.asmx</Value>
+    </Setting>
+    <Setting Name="MultiSpeakClientV30ac_proxyOD3ac_OD_Server" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:55273/OD_Server.asmx</Value>
+    </Setting>
+    <Setting Name="MultiSpeakClientV30ac_proxyEA3ac_EA_Server" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:55273/EA_Server.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
