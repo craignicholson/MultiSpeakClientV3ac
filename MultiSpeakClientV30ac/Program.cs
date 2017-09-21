@@ -10,6 +10,7 @@
 namespace MultiSpeakClientV30ac
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Xml;
@@ -318,7 +319,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="errorObjects">
         /// The error objects.
         /// </param>
-        private static void PrintErrorObjects(object[] errorObjects)
+        private static void PrintErrorObjects(IEnumerable<object> errorObjects)
         {
             foreach (var error in errorObjects)
             {
@@ -619,6 +620,7 @@ namespace MultiSpeakClientV30ac
                 }
             }
 
+            PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
             WriteToFile(xml, "GetActiveOutages", "3AC");
         }
 
@@ -636,7 +638,6 @@ namespace MultiSpeakClientV30ac
             while (objectsRemaining > 0)
             {
                 var response = client.GetAllActiveOutageEvents(lastReceived);
-
                 PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
                 lastReceived = client.MultiSpeakMsgHeaderValue.LastSent;
                 int.TryParse(client.MultiSpeakMsgHeaderValue.ObjectsRemaining, out objectsRemaining);
@@ -649,7 +650,6 @@ namespace MultiSpeakClientV30ac
                 Console.WriteLine($"GetAllActiveOutageEvents items in response : {response.Length}");
                 var serializer = new XmlSerializer(typeof(proxyOA3ac.outageEvent[]));
                 string xml;
-
                 using (var sww = new StringWriter())
                 {
                     using (var writer = XmlWriter.Create(sww))
@@ -660,7 +660,6 @@ namespace MultiSpeakClientV30ac
                 }
 
                 WriteToFile(xml, $"GetAllActiveOutageEvents.{objectsRemaining}", "3AC");
-
                 PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
             }
         }
@@ -692,17 +691,42 @@ namespace MultiSpeakClientV30ac
             // Help a coder out, print out account and servLoc and append to a file
             foreach (var item in response)
             {
+                const string UrlCustomers = " MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  GetCustomerOutageHistory ";
                 const string Url = " MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -v Restoration ";
-                var data = $"-d {item.meterNo}";
-                Console.WriteLine(data);
-                using (var file = new StreamWriter("BATCH_ODEventNotifications.txt", true))
+                var meterNo = $"-d {item.meterNo}";
+                var duration = item.interruptionDuration;
+                Console.WriteLine(meterNo);
+
+                using (var file = new StreamWriter("BATCH_GetCustomerOutageHistory.txt", true))
                 {
-                    file.WriteLine($"{Url}{data}");
+                    file.WriteLine($"{UrlCustomers} -a {item.accountNumber} -l {item.servLoc}");
                 }
 
-                using (var file = new StreamWriter("MeterIdentifiers.txt", true))
+                using (var file = new StreamWriter("BATCH_ODEventNotifications.txt", true))
+                {
+                    file.WriteLine($"{Url}{meterNo}");
+                }
+
+                using (var file = new StreamWriter("BATCH_MeterIdentifiers.txt", true))
                 {
                     file.WriteLine(item.meterNo);
+                }
+
+                // If no duration skip writing the data to a file.
+                if (duration == null)
+                {
+                    continue;
+                }
+
+                if (int.Parse(duration) <= 0)
+                {
+                    continue;
+                }
+
+                Console.WriteLine($"meterNo : {meterNo} | duration : {duration}");
+                using (var file = new StreamWriter("GetActiveOutages_greater_than_zero.csv", true))
+                {
+                    file.WriteLine($"{options.OutageEventId},{meterNo},{duration}");
                 }
             }
 
@@ -792,7 +816,7 @@ namespace MultiSpeakClientV30ac
             };
             var response = client.GetOutageStatusByLocation(location);
             Console.WriteLine($"location.status : {response.status} | statusSpecified : {response.statusSpecified}");
- 
+
             var serializer = new XmlSerializer(typeof(locationStatus));
             string xml;
 
@@ -839,7 +863,23 @@ namespace MultiSpeakClientV30ac
             var response = client.GetCustomerOutageHistory(options.Account, options.Location);
             foreach (var item in response)
             {
-                Console.WriteLine(item.outageDescription);
+                Console.WriteLine($"OutageEventId->{options.OutageEventId},{item.meterNo},{item.accountNumber},{item.servLoc},interruptionDuration>{item.interruptionDuration},{item.timeRestored},{item.outageDescription}");
+
+                // If no duration skip writing the data to a file.
+                if (item.interruptionDuration == null)
+                {
+                    continue;
+                }
+
+                if (int.Parse(item.interruptionDuration) <= 0)
+                {
+                    continue;
+                }
+
+                using (var file = new StreamWriter("GetCustomerOutageDurations_greater_than_zero.csv", true))
+                {
+                    file.WriteLine($"OutageEventId->{options.OutageEventId},{item.meterNo},{item.accountNumber},{item.servLoc},interruptionDuration>{item.interruptionDuration},{item.timeRestored},{item.outageDescription}");
+                }
             }
 
             var serializer = new XmlSerializer(typeof(proxyOA3ac.outageDurationEvent[]));
