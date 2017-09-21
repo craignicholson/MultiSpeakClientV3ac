@@ -32,7 +32,7 @@ namespace MultiSpeakClientV30ac
         /// The file directory where the output files will be written
         /// TODO: FIX THIS - MAKE IT CONFIGURATION
         /// </summary>
-        private const string FileDirectory = @"C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\LG";
+        private const string FileDirectory = @"C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\Milsoft";
 
         /// <summary>
         /// The MultiSpeak Message Header .Version, Version of MultiSpeak
@@ -140,13 +140,13 @@ namespace MultiSpeakClientV30ac
                                 GetOutageDurationEvents(client, options);
                                 break;
                             case "GetOutageEventStatus":
-                                GetOutageEventStatus(client);
+                                GetOutageEventStatus(client, options);
                                 break;
                             case "GetOutageStatusByLocation":
-                                GetOutageStatusByLocation(client);
+                                GetOutageStatusByLocation(client, options);
                                 break;
                             case "GetCustomersAffectedByOutage":
-                                GetCustomersAffectedByOutage(client);
+                                GetCustomersAffectedByOutage(client, options);
                                 break;
                             case "GetCustomerOutageHistory":
                                 GetCustomerOutageHistory(client, options);
@@ -409,7 +409,7 @@ namespace MultiSpeakClientV30ac
                     using (var writer = XmlWriter.Create(sww))
                     {
                         serializer.Serialize(writer, response);
-                        xml = sww.ToString(); // Your XML
+                        xml = sww.ToString();
                     }
                 }
 
@@ -583,7 +583,7 @@ namespace MultiSpeakClientV30ac
                     using (var writer = XmlWriter.Create(sww))
                     {
                         serializer.Serialize(writer, response);
-                        xml = sww.ToString(); // Your XML
+                        xml = sww.ToString();
                     }
                 }
 
@@ -640,13 +640,13 @@ namespace MultiSpeakClientV30ac
                 PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
                 lastReceived = client.MultiSpeakMsgHeaderValue.LastSent;
                 int.TryParse(client.MultiSpeakMsgHeaderValue.ObjectsRemaining, out objectsRemaining);
-
                 Console.WriteLine($"GetAllActiveOutageEvents objectsRemaining : {objectsRemaining}");
                 foreach (var item in response)
                 {
                     Console.WriteLine($"deviceid : {item.deviceID}");
                 }
 
+                Console.WriteLine($"GetAllActiveOutageEvents items in response : {response.Length}");
                 var serializer = new XmlSerializer(typeof(proxyOA3ac.outageEvent[]));
                 string xml;
 
@@ -699,6 +699,11 @@ namespace MultiSpeakClientV30ac
                 {
                     file.WriteLine($"{Url}{data}");
                 }
+
+                using (var file = new StreamWriter("MeterIdentifiers.txt", true))
+                {
+                    file.WriteLine(item.meterNo);
+                }
             }
 
             var serializer = new XmlSerializer(typeof(proxyOA3ac.outageDurationEvent[]));
@@ -729,18 +734,19 @@ namespace MultiSpeakClientV30ac
         {
             if (options == null)
             {
+                Console.WriteLine("GetOutageEventStatus takes the parameter OutageEventID : -o YourOutageEventId");
                 return;
             }
 
             if (options.OutageEventId == null)
             {
-                Console.WriteLine("CLI options.OutageEventId is missing, please add -o YourOutageEventID");
+                Console.WriteLine("CLI options.OutageEventId is missing, please add -o YourOutageEventId");
                 return;
             }
 
             var response = client.GetOutageEventStatus(options.OutageEventId);
-
-            Console.WriteLine(response.comments);
+            Console.WriteLine($"comments : {response.comments} | errorString : {response.errorString}");
+            Console.WriteLine($"objectID : {response.objectID} | outageStatus : {response.outageStatus}");
 
             var serializer = new XmlSerializer(typeof(proxyOA3ac.outageEventStatus));
             string xml;
@@ -770,6 +776,7 @@ namespace MultiSpeakClientV30ac
         {
             if (options == null)
             {
+                Console.WriteLine("GetOutageStatusByLocation takes the parameter OutageEventID : -l YourLocationID");
                 return;
             }
 
@@ -784,6 +791,8 @@ namespace MultiSpeakClientV30ac
                 servLoc = options.Location
             };
             var response = client.GetOutageStatusByLocation(location);
+            Console.WriteLine($"location.status : {response.status} | statusSpecified : {response.statusSpecified}");
+ 
             var serializer = new XmlSerializer(typeof(locationStatus));
             string xml;
 
@@ -919,7 +928,7 @@ namespace MultiSpeakClientV30ac
                     using (var writer = XmlWriter.Create(sww))
                     {
                         serializer.Serialize(writer, response);
-                        xml = sww.ToString(); // Your XML
+                        xml = sww.ToString();
                     }
                 }
 
@@ -942,6 +951,7 @@ namespace MultiSpeakClientV30ac
             {
                 if (options == null)
                 {
+                    Console.WriteLine("SendOdEventNotification requires options.Device : -d 123456789");
                     return;
                 }
 
