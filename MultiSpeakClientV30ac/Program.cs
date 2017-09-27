@@ -22,6 +22,8 @@ namespace MultiSpeakClientV30ac
     using MultiSpeakClientV30ac.proxyMR3ac;
     using MultiSpeakClientV30ac.proxyOA3ac;
 
+    using action = MultiSpeakClientV30ac.proxyMR3ac.action;
+    using extensionsItemExtType = MultiSpeakClientV30ac.proxyMR3ac.extensionsItemExtType;
     using serviceType = proxyMDM3ac.serviceType;
 
     /// <summary>
@@ -33,7 +35,7 @@ namespace MultiSpeakClientV30ac
         /// The file directory where the output files will be written
         /// TODO: FIX THIS - MAKE IT CONFIGURATION
         /// </summary>
-        private const string FileDirectory = @"C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\Milsoft";
+        private const string FileDirectory = @"C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\LG";
 
         /// <summary>
         /// The MultiSpeak Message Header .Version, Version of MultiSpeak
@@ -192,7 +194,7 @@ namespace MultiSpeakClientV30ac
                                 PingUrl(client);
                                 break;
                             case "InitiateCDStateRequest":
-                                InitiateCdStateRequest(client, options);
+                                // InitiateCdStateRequest(client, options);
                                 break;
                             default:
                                 Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
@@ -237,8 +239,14 @@ namespace MultiSpeakClientV30ac
                             case "GetLatestReadings":
                                 GetLatestReadings(client);
                                 break;
+                            case "IntiaiteCDStateRequest":
+                                InitiateCdStateRequest(client, options);
+                                break;
                             case "InitiateMeterReadByMeterNumber":
                                 InitiateMeterReadByMeterNumber(client, options);
+                                break;
+                            case "ServiceLocationChangeNotification":
+                                SendServiceLocationChangeNotification(client, options);
                                 break;
                             default:
                                 Console.WriteLine("Check the list of methods in the README.md for each Server.");
@@ -252,6 +260,96 @@ namespace MultiSpeakClientV30ac
                 default:
                     Console.WriteLine($"{options.Server} not found. Did you mean OA_Server or MDM_Server?");
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Send a ServiceLocationChangeNotification
+        /// </summary>
+        /// <param name="client">Expects the MR_Server Client</param>
+        /// <param name="options">Expects a deviceId</param>
+        private static void SendServiceLocationChangeNotification(MR_Server client, Options options)
+        {
+            try
+            {
+                if (options == null)
+                {
+                    return;
+                }
+
+                if (options.Device == null)
+                {
+                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                    return;
+                }
+
+                var serviceLocations = new[] 
+                {
+                    new proxyMR3ac.serviceLocation
+                    {
+                        objectID  = options.Device,  // Stuff the device id here for testing.
+                        verb = action.Change,
+                        extensionsList = new[]
+                        {
+                            new proxyMR3ac.extensionsItem { extName = "homeAC", extValue = "830" },
+                            new proxyMR3ac.extensionsItem { extName = "homePhone", extValue = "7082476" },
+                            new proxyMR3ac.extensionsItem { extName = "voteSw", extValue = "Y" },
+                            new proxyMR3ac.extensionsItem { extName = "votingDistCd", extValue = "6" },
+                            new proxyMR3ac.extensionsItem { extName = "rateStartDt", extValue = "02/18/2016" },
+                            new proxyMR3ac.extensionsItem { extName = "tempLocationCd", extValue = "P" },
+                            new proxyMR3ac.extensionsItem { extName = "dnpSw", extValue = "false", extType = extensionsItemExtType.boolean, extTypeSpecified = true },
+                        },
+                        gridLocation = "63556308",
+                        facilityID = "63556308",
+                        custID = "209740",
+                        accountNumber = "209740001",
+                        servAddr1 = "822 SCHUMACHER",
+                        servCity = "NEW BRAUNFELS",
+                        servState = "TX",
+                        servZip = "78130",
+                        revenueClass = "Craig+31",
+                        servStatus = "1",
+                        billingCycle = "8",
+                        route = "36",
+                        acRecvBal = -50.01f,
+                        acRecvCur = -50.01f,
+                        connectDate = DateTime.Parse("1999-12-31"),
+                        network = new proxyMR3ac.network
+                        {
+                            boardDist = "6",
+                            franchiseDist = "2",
+                            schoolDist = "34",
+                            district = "20",
+                            county = "6",
+                            cityCode = "2",
+                            substationCode = "68",
+                            feeder = "5",
+                            phaseCd = proxyMR3ac.phaseCd.A,
+                            eaLoc = new proxyMR3ac.eaLoc { name = "27" },
+                            linkedTransformer = new proxyMR3ac.linkedTransformer
+                            {
+                                bankID = "T63556308002", unitList = new[] { "T-32405" }  
+                            },
+                            linemanServiceArea = "08",
+                         },
+                        phoneList = new[] { new proxyMR3ac.phoneNumber { phone = "8307082476", phoneType = proxyMR3ac.phoneNumberPhoneType.Home } },
+                        timezone = new proxyMR3ac.timeZone { DSTEnabled = true, UTCOffset = -6, name = "Central Standard Time" },
+                        description = "MTR ON A/E HOME"
+                    }
+                };
+                var response = client.ServiceLocationChangedNotification(serviceLocations);
+                PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
+
+                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+                // so instead of passing response we pass repsonse.ToArray<object>()
+                if (response != null)
+                {
+                    PrintErrorObjects(response.ToArray<object>());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -1160,7 +1258,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void InitiateCdStateRequest(MDM_Server client, Options options)
+        private static void InitiateCdStateRequest(MR_Server client, Options options)
         {
             var cdstates = new[]
             {
@@ -1200,16 +1298,16 @@ namespace MultiSpeakClientV30ac
                 var expirationTime =
                     (float)requestDate.AddMinutes(30)
                         .ToOADate(); // TimeStamp is unix timestamp, so we use ToOADate to get a double and cast to float. 
-                var response =
-                    client.InitiateCDStateRequest(cdstates, responseUrl, transactionId, expirationTime);
+                // var response =
+                //    client.Initiate(cdstates, responseUrl, transactionId, expirationTime);
                 PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
 
                 // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
                 // so instead of passing response we paass repsonse.ToArray<object>()
-                if (response != null)
-                {
-                    PrintErrorObjects(response.ToArray<object>());
-                }
+                //if (response != null)
+                //{
+                //    PrintErrorObjects(response.ToArray<object>());
+                //}
             }
             catch (Exception ex)
             {
