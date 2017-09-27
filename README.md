@@ -1,24 +1,25 @@
-﻿ # MultiSpeak Client for 3.0AC
+﻿# MultiSpeak Client for 3.0AC
 
  Client used to make soap requests to OA_Server, MDM_Server, and CB_Server, Scada_Server
 
- ## Quick Start
+## Quick Start
 
  Fire up this app
  Build and compile this app.
 
  > cd C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug
 
+### Sample Calls
 
-###  Sample Calls
+> MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetActiveOutages
 
-MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetActiveOutages
+Results 112
+
+> MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetAllActiveOutageEvents
+
 Results 112 
 
-MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetAllActiveOutageEvents
-Results 112 
-
-MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetAllCircuitElements
+> MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetAllCircuitElements
  BUSTED XML ERROR - DURING serialization
 
  MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetOutageDurationEvents -o 2017-08-28-2453
@@ -155,7 +156,19 @@ MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSol
 Success
 
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u milsoft -p milsoft -c Milsoft -s MDM_Server -m  InitiateOutageDetectionEventRequest -d 0111500 -r http://10.86.1.81/SimulatorCraig/MultiSpeak/30ac/OA_Server.asmx
+
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u milsoft -p milsoft -c Milsoft -s MDM_Server -m  InitiateOutageDetectionEventRequest -d 15524652 -r http://10.86.1.81/SimulatorCraig/MultiSpeak/30ac/OA_Server.asmx
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u milsoft -p milsoft -c Milsoft -s MDM_Server -m  InitiateOutageDetectionEventRequest -d 0132786 -r http://10.86.1.81/SimulatorCraig/MultiSpeak/30ac/OA_Server.asmx
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  ServiceLocationChangeNotification -d 100
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u milsoft -p milsoft -c Milsoft -s MDM_Server -m  InitiateOutageDetectionEventRequest -d 0132786 -r http://10.86.1.81/SimulatorFakeOMS/MultiSpeak/30ac/OA_Server.asmx
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u milsoft -p milsoft -c Milsoft -s MDM_Server -m  InitiateOutageDetectionEventRequest -d 15524652 -r http://10.86.1.81/SimulatorFakeOMS/MultiSpeak/30ac/OA_Server.asmx
+
+
+
 Sent 610 InitiateOutageDetectionEventRequests using the GVEC meters
 
 See list.
@@ -284,302 +297,139 @@ MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx
 
 
 
+ 
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  ServiceLocationChangeNotification -d 100
+
+FakeCISMSpeak3
+FakeCISMSpeak3, this is the client which will make requests to the AMI through the broker
+
+Test 1:
+MDMWebAPI is setup. 
+
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: #100 might not be in the FakeCISMSpeak3 system 
+		or might not have Readsource assigned.
+        nounType :
+        eventTime : 9/27/2017 2:28:52 PM
+        eventTimeSpecified : True
+
+Test 2:
+Remove WebAPI Credentials
+
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: Client - FakeCISMSpeak3 does not have API.
+        nounType :
+        eventTime : 9/27/2017 2:38:29 PM
+        eventTimeSpecified : True
+TASK FINISHED
+Execution Time : 00:00:01.8139689
+
+Test 3:
+Add MSpeak3 ServiceLocationChangedNotification, no routing.
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: Client - FakeCISMSpeak3 does not have API.
+        nounType :
+        eventTime : 9/27/2017 2:41:27 PM
+        eventTimeSpecified : True
+
+Test 4:
+Add MDM WebAPI back
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: #100 might not be in the FakeCISMSpeak3 system or might not have Readsource assigned.
+        nounType :
+        eventTime : 9/27/2017 2:42:23 PM
+        eventTimeSpecified : True
+
+SELECT
+ReadSourceId, *
+FROM
+MDM.dbo.Meter
+WHERE MeterIdentifier='100'
+
+SELECT * FROM MDM.dbo.ReadSource
+WHERE ReadSourceID = 17
+
+INSERT INTO MDM.dbo.Location VALUES
+(1,100,NULL, NULL, NULL, NULL, NULL, 1, GetDate(), NULL, NULL)
+
+SELECT * FROM MDM.dbo.Location
+WHERE LocationNumber = '100'
+
+UPDATE MDM.dbo.Meter
+SET LocationId = 42944
+WHERE MeterIdentifier = '100'
+
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: Cannot find subcriber for method - ServiceLocationChangedNotification. 
+		Either Landis & Gyr is not setup or does not have receiver for this method
+        nounType :
+        eventTime : 9/27/2017 2:49:24 PM
+        eventTimeSpecified : True
+
+
+UPDATE MDM.dbo.ReadSource
+SET ReadSourceDescription = 'Landis'
+WHERE ReadSourceDescription = 'Landis & Gyr'
+
+Update VendorName in Vendor  Edit for Landis & Gyr to Landis
+
+Re-Add the MSpeak3 ServiceLocationChangedNotification
+
+SUCCESS
+
+MultiSpeakMsgHeader Server >
+        Version : 3.0AC
+        UserID : FakeCISMSpeak3
+        Pwd : FakeCISMSpeak3
+        AppName : MultiSpeakClient30ac
+        AppVersion : 1.0beta
+        Company : FakeCISMSpeak3
+        CSUnits : feet
+        CoordinateSystem :
+        Datum :
+        SessionID :
+        PreviousSessionID :
+        ObjectsRemaining :
+        LastSent :
+        RegistrationID :
+        AuditID :
+        MessageID :
+        TimeStamp : 1/1/0001 12:00:00 AM
+        TimeStampSpecified : False
+        BuildString :
+        AnyAttr :
+        EncodedMustUnderstand : 0
+        EncodedMustUnderstand12 : 0
+        MustUnderstand : False
+        Actor :
+        Role :
+        DidUnderstand : True
+        EncodedRelay : 0
+        Relay : False
+TASK FINISHED
+Execution Time : 00:00:14.7539258
 
 
 
-
-
-
- ## https
+## https
 Using and overide to ignore self signed certs. .Net will reject sites with self signed certs
 and this is the only way I have resolved this issue to date.
 
- ## How to run a test with the sample endpoints
+## How to run a test with the sample endpoints
 
- ## Security
+## Security
+
 How to code or implmeent security in the MultiSpeak endpoints
 
- # MultiSpeakBusArch30AC
+## MultiSpeakBusArch30AC
+ 
  Setup and Run..
  Monitoring... with Fiddler
  Monitoring... with Wireshark
  
- Using Burp Suite... 
-
- # MultiSpeak Broker Setup for Testing.
-
-## Step 1 Authorized User
-Add Server for the Clients User
-
-Client - MDMPortal / CSR Portal
-Server - MultiSpeakBroker
-
-Add Authorized User for the MultiSpeak Broker Web App.
-
-Example:
-
- Example - CSR Portal Makes a call to the MultiSpeak Broker
- Authorized Users - http://10.86.1.81/MultiSpeakBroker/UserConfig.aspx
- Company : BackOffice
- UserName : bo
- User Password: bo
-
-This company, user and password will be used to post data to the MultiSpeakBroker Url:
-
-> https://etss-apploadtest.etss.com/MultiSpeakBroker/MultiSpeak/416/1/MDM_Server.asmx
-
-db.User.find({Compnay:"BackOffice"}).pretty()
-{
-        "_id" : ObjectId("58ed494497c3742734702331"),
-        "Company" : "BackOffice",
-        "UserID" : "bo",
-        "Password" : "bo"
-}
-
-### Automate
-
-```mongo
-
-db.User.insert()
-{
-        "Company" : "BackOffice",
-        "UserID" : "bo",
-        "Password" : "bo"
-}
-
-```
-
-This will allow the CSR portal to send requests to the MultiSpeakBroker Web App.
-For example, in the MDMPortal.config you would setup the following:
-
-J:\ElectSolve\Green\Config\MDMPortal.config
-
-  <add key="Multispeak.415.Generic.User" value="bo" />
-  <add key="Multispeak.415.Generic.Password" value="bo" />
-  <add key="Multispeak.415.Generic.ApplicationName" value="MDM" />
-  <add key="Multispeak.415.Generic.Company" value="BackOffice" />
-  <add key="Multispeak.415.Generic.ApplicationVersion" value="2.0" />
-  <add key="Multispeak.415.Generic.BaseURL" value="https://etss-apploadtest.etss.com/MultiSpeakBroker/MultiSpeak/416/1/" />
-  <add key="Multispeak.415.Generic.CD_ServerPath" value="MDM_Server.asmx" />
-  <add key="Multispeak.415.Generic.MR_ServerPath" value="MDM_Server.asmx" />
-  <add key="Multispeak.415.Generic.Response.BaseURL" value="https://etss-apploadtest.etss.com/MDMServices/Multispeak/415/" />
-  <add key="Multispeak.415.Generic.Response.NOT_ServerPath" value="NOT_Server.asmx" />
-  <add key="Multispeak.415.Generic.Response.ConnectDisconnectList" value="N" />
-  <add key="Multispeak.415.Generic.meterID.IsAttribute" value="N" />
-  <add key="Multispeak.415.Generic.Response.ConvertWhToKwh" value="N" />
-  <add key="Multispeak.415.Generic.Response.NotServerReadMethod" value="ReadingChangedNotification" />
-
-So what we have is a person using the page InitiateMeterRead, InitiateConnect, InitiateDisconnect, InitiateDemandReset
-will forward or post this command to the MultiSpeak Broker.
-
-It will be the MultiSpeak Broker's job to forward the request to the actual vendor (AMI, CIS, OMS, etc..)
-
-
- ## Step 2 - Vendor Configuration - http://10.86.1.81/MultiSpeakBroker/VendorConfig.aspx
-
-Step 2 has two parts.   The first part is adding the Authorized user we just setup which is going to receive
-the requests from the CSR Portal to be able to choose the correct endpoint to send the requests.  We can
-support many AMI systems, and each system has a ReadSource.  We use this read source to forward meter
-commands to the correct AMI system.
-
-As the broker receives requests, having the CSR Portal's Receiver (BackOffice) setup as a vendor we
-can then setup this receiver to use the MDMWebAPI to query the MDM system about the meter in the request.
-Each InitiateMeterRead, Connect, Disconnect, and Demand Reset will be for a meter, and a meter could be
-in either Aclara or SRFN or Sensus, or SSN AMI system.
-
-We map the meter's readsource when we inititally load the data.
-
-### Step 2.A - Setup the CSR Portal's Authorized User as a Vendor.
-
-https://etss-apploadtest.etss.com/MultiSpeakBroker/VendorConfig.aspx
-Add
-    Name : BackOffice
-    Info : TYPE =  Client. Store credential to Backoffice
-
-If this vendor is making requests to Broker, please configure Client Web API where Broker 
-can retreive meter information.
-
-**Configure the MDMWebAPi**
-
-If Broker is required to return or notify result to this vendor, the vendor might expect user/pass. 
-Configure Credential.
-
-~This is more for synchronous responses which need their own example~
-
-> db.Vendor.find({VendorName: "BackOffice"}).pretty()
-{
-        "_id" : ObjectId("58e417c297c37811841113fe"),
-        "VendorName" : "BackOffice",
-        "MultiSpeakVersion" : "3",
-        "MRCB_UserID" : "member0",
-        "MRCB_Password" : "member0",
-        "CDCB_UserID" : "member0",
-        "CDCB_Password" : "member0",
-        "Info" : "TYPE =  Client. Store credential to Backoffice",
-        "APIUrl" : "https://etss-apploadtest.etss.com/MDMWebAPI/",
-        "APIUserID" : "electsolve",
-        "APIPassword" : "3lects01ve!"
-}
-
-### Step 2.B - Setup the Vendor's endpoint who will recieve the request and return a response.
-
-This step adds the Vendor who will receive the request.  The vendor could be an AMI, CIS, or OMS system.
-
-Typically for Asynchronous request and responses, where we send a request, and move on, and then server then
-responds with a Notification, we will ndver have to setup the MR_BC and CD_CB user and passwords.
-
-The main area to pay attention to here is the VendorName which needs to match the 
-MDM.dbo.ReadSource.ReadSourceDescription.
-
-> db.Vendor.find({VendorName: "SSN"}).pretty()
-{
-        "_id" : ObjectId("5880ead597c37b1bc0905f2b"),
-        "VendorName" : "SSN",
-        "MultiSpeakVersion" : "4",
-        "MRCB_UserID" : "",
-        "MRCB_Password" : "",
-        "CDCB_UserID" : "",
-        "CDCB_Password" : "",
-        "Info" : "TYPE = RS. Shared ReadSource (for all utilies)"
-}
-
-### Step 2.C
-
-Click 'Set Subscribers'
-https://etss-apploadtest.etss.com/MultiSpeakBroker/SubscribersConfig.aspx?ReadSource=SSN
-
-Once you have the Vendor setup (AMI, CIS, OMS) we have to configure or setup the requests we
-will allow the MultiSpeakBroker to forward on to the AMI, CIS, or OMS System.
-
-Each method will need to be setup individually.
-
-Edit Subscriber - InitiateCDStateRequest (MSpeak4)
-Response Method(MSpeak4): MSpeak4CDStateChangedNotification
-
-Host: **SSN**  (Available from Dropdown) - This should match your vendor
-Host URL:  http://10.86.1.32:8081/soapserver
-User ID:  
-User Password:  
-AMI Meter Type:   
-
-AMI Meter Type is **VERY** important.  AMI systems typically can accept one value
-which is used to look up the meter and forward the command to the meter.
-
-Remember we have two types of messages we have to setup:
-* Commands which go to the AMI
-* Commands which are coming back from AMI as Notifications.
-
-
-We will send a multispeak message version 4 message (InitiateCDStateRequest) to
-the SSN AMI system.
-
-Add/Edit Subscriber
-Channel: ChannelMSpeak4InitiateCDStateRequest
-Receiver Host Type: SSN 
-Host URL:  http://10.86.1.32:8081/soapserver
-User ID  ******
-User Password  ****
-AMI Meter Type  MeterIdntifier
-
-The user and password you enter here will be used to authenticate with the AMI provider URLs
-and API methods.
-
-Examples
-
-> db.Subscriber.find({MeterReadSource: "SSN"}).pretty()
-{
-        "_id" : ObjectId("58e4166a97c37811841113f5"),
-        "MeterReadSource" : "SSN",
-        "Type" : "SSN",
-        "Channel" : "ChannelMSpeak4InitiateCDStateRequest",
-        "Url" : "http://10.86.1.32:8081/soapserver",
-        "UserID" : "",
-        "Password" : "",
-        "AMIMeterType" : "MeterIdentifier",
-        "SettingAppendSerialNo" : false,
-        "SettingSourceSerialNo" : null
-}
-{
-        "_id" : ObjectId("58e4166a97c37811841113f6"),
-        "MeterReadSource" : "SSN",
-        "Type" : "MSpeak4",
-        "Channel" : "ChannelMSpeak4CDStateChangedNotification",
-        "Url" : "",
-        "UserID" : "",
-        "Password" : "",
-        "AMIMeterType" : "MeterIdentifier",
-        "SettingAppendSerialNo" : false,
-        "SettingSourceSerialNo" : null
-}
-{
-        "_id" : ObjectId("58e4166a97c37811841113f7"),
-        "MeterReadSource" : "SSN",
-        "Type" : "MSpeak4",
-        "Channel" : "ChannelMSpeak4CDStatesChangedNotification",
-        "Url" : "",
-        "UserID" : "",
-        "Password" : "",
-        "AMIMeterType" : "MeterIdentifier",
-        "SettingAppendSerialNo" : false,
-        "SettingSourceSerialNo" : null
-}
-{
-        "_id" : ObjectId("58e4167897c37811841113f8"),
-        "MeterReadSource" : "SSN",
-        "Type" : "SSN",
-        "Channel" : "ChannelMSpeak4InitiateConnectDisconnect",
-        "Url" : "http://10.86.1.32:8081/soapserver",
-        "UserID" : "",
-        "Password" : "",
-        "AMIMeterType" : "MeterIdentifier",
-        "SettingAppendSerialNo" : false,
-        "SettingSourceSerialNo" : null
-}
-{
-        "_id" : ObjectId("58e4168397c37811841113f9"),
-        "MeterReadSource" : "SSN",
-        "Type" : "SSN",
-        "Channel" : "ChannelMSpeak4InitiateMeterReadingsByMeterID",
-        "Url" : "http://10.86.1.32:8081/soapserver",
-        "UserID" : "",
-        "Password" : "",
-        "AMIMeterType" : "AMIControlIdentifier",
-        "SettingAppendSerialNo" : false,
-        "SettingSourceSerialNo" : null
-}
-{
-        "_id" : ObjectId("58e4168397c37811841113fa"),
-        "MeterReadSource" : "SSN",
-        "Type" : "MSpeak4",
-        "Channel" : "ChannelMSpeak4ReadingChangedNotification",
-        "Url" : "",
-        "UserID" : "",
-        "Password" : "",
-        "AMIMeterType" : "MeterIdentifier",
-        "SettingAppendSerialNo" : false,
-        "SettingSourceSerialNo" : null
-}
-{
-        "_id" : ObjectId("58e4169097c37811841113fb"),
-        "MeterReadSource" : "SSN",
-        "Type" : "SSN",
-        "Channel" : "ChannelMSpeak4InitiateDemandReset",
-        "Url" : "http://10.86.1.32:8081/soapserver",
-        "UserID" : "",
-        "Password" : "",
-        "AMIMeterType" : "MeterIdentifier",
-        "SettingAppendSerialNo" : false,
-        "SettingSourceSerialNo" : null
-}
-{
-        "_id" : ObjectId("58e4169097c37811841113fc"),
-        "MeterReadSource" : "SSN",
-        "Type" : "MSpeak4",
-        "Channel" : "ChannelMSpeak4MeterEventNotification",
-        "Url" : "",
-        "UserID" : "",
-        "Password" : "",
-        "AMIMeterType" : "MeterIdentifier",
-        "SettingAppendSerialNo" : false,
-        "SettingSourceSerialNo" : null
-}
+ Using Burp Suite...
