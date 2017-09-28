@@ -227,6 +227,12 @@ namespace MultiSpeakClientV30ac
                             (obj, certificate, chain, errors) => true;
                         switch (options.Method)
                         {
+                            case "CancelDisconnectedStatus":
+                                SendCancelDisconnectedStatus(client, options);
+                                break;
+                            case "CancelUsageMonitoring":
+                                SendCancelUsageMonitoring(client, options);
+                                break;
                             case "GetAMRSupportedMeters":
                                 GetAmrSupportedMeters(client);
                                 break;
@@ -245,6 +251,18 @@ namespace MultiSpeakClientV30ac
                             case "InitiateMeterReadByMeterNumber":
                                 InitiateMeterReadByMeterNumber(client, options);
                                 break;
+                            case "MeterAddNotification":
+                                SendMeterNotification(client, options, options.Method);
+                                break;
+                            case "MeterChangedNotification":
+                                SendMeterNotification(client, options, options.Method);
+                                break;
+                            case "MeterRemoveNotification":
+                                SendMeterNotification(client, options, options.Method);
+                                break;
+                            case "MeterRetireNotification":
+                                SendMeterNotification(client, options, options.Method);
+                                break;
                             case "ServiceLocationChangeNotification":
                                 SendServiceLocationChangeNotification(client, options);
                                 break;
@@ -262,6 +280,156 @@ namespace MultiSpeakClientV30ac
                     break;
             }
         }
+
+        /// <summary>
+        /// SendMeterNotification for the four types of Notifications, see methods.
+        /// </summary>
+        /// <param name="client">Expects MR_Server</param>
+        /// <param name="options">Expects options.Device</param>
+        /// <param name="method">MeterAddNotification, MeterChangeNotification, MeterRemoveNotification, MeterRetireNotification</param>
+        private static void SendMeterNotification(MR_Server client, Options options, string method)
+        {
+            try
+            {
+                if (options == null)
+                {
+                    return;
+                }
+
+                if (options.Device == null)
+                {
+                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                    return;
+                }
+
+                var meters = new[] 
+                {
+                    new proxyMR3ac.meter
+                    {
+                        meterNo = options.Device,
+                        serialNumber = options.Device,
+                        meterType = "Meter Type",
+                        manufacturer = string.Empty,
+                        sealNumberList = new[] { "12345678" , "ABCDEFG" },
+                        AMRType = "AMR Type",
+                        AMRDeviceType = string.Empty,
+                        AMRVendor = string.Empty,
+                        nameplate = new proxyMR3ac.nameplate { dials = 6, dialsSpecified = true, multiplier = 100, multiplierSpecified = true},
+                        utilityInfo = new proxyMR3ac.utilityInfo { accountNumber = "" ,servLoc = "", custID = "" },
+                        //meterConnectionStatus = new proxyMR3ac.meterConnectionStatus { }
+                    }  
+                };
+
+                proxyMR3ac.errorObject[] response = null;
+                switch (options.Method)
+                {
+                    case "MeterAddNotification":
+                        response = client.MeterAddNotification(meters);
+                        break;
+                    case "MeterChangedNotification":
+                        response = client.MeterChangedNotification(meters);
+                        break;
+                    case "MeterRemoveNotification":
+                        response = client.MeterRemoveNotification(meters);
+                        break;
+                    case "MeterRetireNotification":
+                        response = client.MeterRetireNotification(meters);
+                        break;
+                    default:
+                        Console.WriteLine("Check the list of methods in the README.md for each Server.");
+                        Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
+                        break;
+                }
+
+                PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
+
+                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+                // so instead of passing response we pass repsonse.ToArray<object>()
+                if (response != null)
+                {
+                    PrintErrorObjects(response.ToArray<object>());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// SendCancelDisconnectedStatus to MR_Server
+        /// </summary>
+        /// <param name="client">Expects MR_Server</param>
+        /// <param name="options">Expects options.Device</param>
+        private static void SendCancelDisconnectedStatus(MR_Server client, Options options)
+        {
+            try
+            {
+                if (options == null)
+                {
+                    return;
+                }
+
+                if (options.Device == null)
+                {
+                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                    return;
+                }
+
+                var meterNos = new[] { options.Device };
+                var response = client.CancelDisconnectedStatus(meterNos);
+                PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
+
+                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+                // so instead of passing response we pass repsonse.ToArray<object>()
+                if (response != null)
+                {
+                    PrintErrorObjects(response.ToArray<object>());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// SendCancelUsageMonitoring
+        /// </summary>
+        /// <param name="client">Expects MR_Server</param>
+        /// <param name="options">Exports option.Device</param>
+        private static void SendCancelUsageMonitoring(MR_Server client, Options options)
+        {
+            try
+            {
+                if (options == null)
+                {
+                    return;
+                }
+
+                if (options.Device == null)
+                {
+                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                    return;
+                }
+
+                var meterNos = new[] { options.Device };
+                var response = client.CancelUsageMonitoring(meterNos);
+                PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
+
+                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+                // so instead of passing response we pass repsonse.ToArray<object>()
+                if (response != null)
+                {
+                    PrintErrorObjects(response.ToArray<object>());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// Send a ServiceLocationChangeNotification
