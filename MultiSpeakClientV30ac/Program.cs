@@ -24,6 +24,7 @@ namespace MultiSpeakClientV30ac
 
     using action = MultiSpeakClientV30ac.proxyMR3ac.action;
     using extensionsItemExtType = MultiSpeakClientV30ac.proxyMR3ac.extensionsItemExtType;
+    using remoteReconnectSetting = MultiSpeakClientV30ac.proxyMR3ac.remoteReconnectSetting;
     using serviceType = proxyMDM3ac.serviceType;
 
     /// <summary>
@@ -100,184 +101,199 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">Options are the the CLI options, you can run the program without options to view the help.</param>
         private static void ProcessArgs(Options options)
         {
-            switch (options.Server)
+            try
             {
-                case "OA_Server":
-                    {
-                        var client = new OA_Server
+                switch (options.Server)
+                {
+                    case "OA_Server":
                         {
-                            Url = options.EndPoint,
-                        };
-                        var header = new proxyOA3ac.MultiSpeakMsgHeader
-                        {
-                            UserID = options.UserId,
-                            Pwd = options.Pwd,
-                            AppName = AppName,
-                            AppVersion = AppVersion,
-                            Company = options.Company,
-                            Version = Version
-                        };
-                        client.MultiSpeakMsgHeaderValue = header;
+                            var client = new OA_Server { Url = options.EndPoint, };
+                            var header = new proxyOA3ac.MultiSpeakMsgHeader
+                            {
+                                UserID = options.UserId,
+                                Pwd = options.Pwd,
+                                AppName = AppName,
+                                AppVersion = AppVersion,
+                                Company = options.Company,
+                                Version = Version
+                            };
+                            client.MultiSpeakMsgHeaderValue = header;
 
-                        // self-signed cert override
-                        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate
-                        {
-                            return true;
-                        };
+                            // self-signed cert override
+                            System.Net.ServicePointManager.ServerCertificateValidationCallback =
+                                delegate { return true; };
 
-                        switch (options.Method)
-                        {
-                            case "GetActiveOutages":
-                                GetActiveOutages(client);
-                                break;
-                            case "GetAllActiveOutageEvents":
-                                GetAllActiveOutageEvents(client);
-                                break;
-                            case "GetAllConnectivity":
-                                GetAllConnectivity(client);
-                                break;
-                            case "GetAllCircuitElements":
-                                GetAllCircuitElements(client);
-                                break;
-                            case "GetOutageDurationEvents":
-                                GetOutageDurationEvents(client, options);
-                                break;
-                            case "GetOutageEventStatus":
-                                GetOutageEventStatus(client, options);
-                                break;
-                            case "GetOutageStatusByLocation":
-                                GetOutageStatusByLocation(client, options);
-                                break;
-                            case "GetCustomersAffectedByOutage":
-                                GetCustomersAffectedByOutage(client, options);
-                                break;
-                            case "GetCustomerOutageHistory":
-                                GetCustomerOutageHistory(client, options);
-                                break;
-                            case "ODEventNotification":
-                                SendOdEventNotification(client, options);
-                                break;
-                            default:
-                                Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
-                                Console.WriteLine("Check the list of methods in the README.md for each Server.");
-                                break;
+                            switch (options.Method)
+                            {
+                                case "GetActiveOutages":
+                                    GetActiveOutages(client);
+                                    break;
+                                case "GetAllActiveOutageEvents":
+                                    GetAllActiveOutageEvents(client);
+                                    break;
+                                case "GetAllConnectivity":
+                                    GetAllConnectivity(client);
+                                    break;
+                                case "GetAllCircuitElements":
+                                    GetAllCircuitElements(client);
+                                    break;
+                                case "GetOutageDurationEvents":
+                                    GetOutageDurationEvents(client, options);
+                                    break;
+                                case "GetOutageEventStatus":
+                                    GetOutageEventStatus(client, options);
+                                    break;
+                                case "GetOutageStatusByLocation":
+                                    GetOutageStatusByLocation(client, options);
+                                    break;
+                                case "GetCustomersAffectedByOutage":
+                                    GetCustomersAffectedByOutage(client, options);
+                                    break;
+                                case "GetCustomerOutageHistory":
+                                    GetCustomerOutageHistory(client, options);
+                                    break;
+                                case "ODEventNotification":
+                                    SendOdEventNotification(client, options);
+                                    break;
+                                default:
+                                    Console.WriteLine(
+                                        $"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
+                                    Console.WriteLine("Check the list of methods in the README.md for each Server.");
+                                    break;
+                            }
+
+                            break;
                         }
 
-                        break;
-                    }
+                    case "MDM_Server":
+                        {
+                            var client = new MDM_Server() { Url = options.EndPoint, };
+                            var header = new proxyMDM3ac.MultiSpeakMsgHeader()
+                            {
+                                UserID = options.UserId,
+                                Pwd = options.Pwd,
+                                AppName = AppName,
+                                AppVersion = AppVersion,
+                                Company = options.Company,
+                                Version = Version,
+                                MessageID = new Guid().ToString()
+                            };
+                            client.MultiSpeakMsgHeaderValue = header;
 
-                case "MDM_Server":
-                    {
-                        var client = new MDM_Server()
-                        {
-                            Url = options.EndPoint,
-                        };
-                        var header = new proxyMDM3ac.MultiSpeakMsgHeader()
-                        {
-                            UserID = options.UserId,
-                            Pwd = options.Pwd,
-                            AppName = AppName,
-                            AppVersion = AppVersion,
-                            Company = options.Company,
-                            Version = Version
-                        };
-                        client.MultiSpeakMsgHeaderValue = header;
+                            System.Net.ServicePointManager.ServerCertificateValidationCallback =
+                                (obj, certificate, chain, errors) => true;
+                            switch (options.Method)
+                            {
+                                case "GetCDSupportedMeters":
+                                    GetCdSupportedMeters(client);
+                                    break;
+                                case "InitiateOutageDetectionEventRequest":
+                                    SendInitiateOutageDetectionEventRequest(client, options);
+                                    break;
+                                case "PingUrl":
+                                    PingUrl(client);
+                                    break;
+                                case "InitiateCDStateRequest":
+                                    // InitiateCdStateRequest(client, options);
+                                    break;
+                                default:
+                                    Console.WriteLine(
+                                        $"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
+                                    Console.WriteLine("Check the list of methods in the README.md for each Server.");
+                                    break;
+                            }
 
-                        System.Net.ServicePointManager.ServerCertificateValidationCallback =
-                            (obj, certificate, chain, errors) => true;
-                        switch (options.Method)
-                        {
-                            case "InitiateOutageDetectionEventRequest":
-                                SendInitiateOutageDetectionEventRequest(client, options);
-                                break;
-                            case "PingUrl":
-                                PingUrl(client);
-                                break;
-                            case "InitiateCDStateRequest":
-                                // InitiateCdStateRequest(client, options);
-                                break;
-                            default:
-                                Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
-                                Console.WriteLine("Check the list of methods in the README.md for each Server.");
-                                break;
+                            break;
                         }
 
-                        break;
-                    }
+                    case "MR_Server":
+                        {
+                            var client = new MR_Server { Url = options.EndPoint, };
+                            var header = new proxyMR3ac.MultiSpeakMsgHeader()
+                            {
+                                UserID = options.UserId,
+                                Pwd = options.Pwd,
+                                AppName = AppName,
+                                AppVersion = AppVersion,
+                                Company = options.Company,
+                                Version = Version
+                            };
+                            client.MultiSpeakMsgHeaderValue = header;
 
-                case "MR_Server":
-                    {
-                        var client = new MR_Server
-                        {
-                            Url = options.EndPoint,
-                        };
-                        var header = new proxyMR3ac.MultiSpeakMsgHeader()
-                        {
-                            UserID = options.UserId,
-                            Pwd = options.Pwd,
-                            AppName = AppName,
-                            AppVersion = AppVersion,
-                            Company = options.Company,
-                            Version = Version
-                        };
-                        client.MultiSpeakMsgHeaderValue = header;
+                            // self-signed cert override - because people don't want to pay for valid certs. and .Net blocks self-signed
+                            System.Net.ServicePointManager.ServerCertificateValidationCallback =
+                                (obj, certificate, chain, errors) => true;
+                            switch (options.Method)
+                            {
+                                case "CancelDisconnectedStatus":
+                                    SendCancelDisconnectedStatus(client, options);
+                                    break;
+                                case "CancelUsageMonitoring":
+                                    SendCancelUsageMonitoring(client, options);
+                                    break;
+                                case "GetAMRSupportedMeters":
+                                    GetAmrSupportedMeters(client);
+                                    break;
+                                case "GetHistoryLogByMeterNo":
+                                    GetHistoryLogByMeterNo(client, options);
+                                    break;
+                                case "GetLatestReadingByMeterNo":
+                                    GetLatestReadingByMeterNo(client, options);
+                                    break;
+                                case "GetLatestReadings":
+                                    GetLatestReadings(client);
+                                    break;
+                                case "IntiaiteCDStateRequest":
+                                    InitiateCdStateRequest(client, options);
+                                    break;
+                                case "InitiateMeterReadByMeterNumber":
+                                    InitiateMeterReadByMeterNumber(client, options);
+                                    break;
+                                case "InitiateUsageMonitoring":
+                                    InitiateUsageMonitoring(client, options);
+                                    break;
+                                case "InitiateDisconnectedStatus":
+                                    InitiateDisconnectedStatus(client, options);
+                                    break;
+                                case "MeterAddNotification":
+                                    SendMeterNotification(client, options, options.Method);
+                                    break;
+                                case "MeterChangedNotification":
+                                    SendMeterNotification(client, options, options.Method);
+                                    break;
+                                case "MeterRemoveNotification":
+                                    SendMeterNotification(client, options, options.Method);
+                                    break;
+                                case "MeterRetireNotification":
+                                    SendMeterNotification(client, options, options.Method);
+                                    break;
+                                case "ServiceLocationChangeNotification":
+                                    SendServiceLocationChangeNotification(client, options);
+                                    break;
+                                default:
+                                    Console.WriteLine("Check the list of methods in the README.md for each Server.");
+                                    Console.WriteLine(
+                                        $"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
+                                    break;
+                            }
 
-                        // self-signed cert override - because people don't want to pay for valid certs. and .Net blocks self-signed
-                        System.Net.ServicePointManager.ServerCertificateValidationCallback =
-                            (obj, certificate, chain, errors) => true;
-                        switch (options.Method)
-                        {
-                            case "CancelDisconnectedStatus":
-                                SendCancelDisconnectedStatus(client, options);
-                                break;
-                            case "CancelUsageMonitoring":
-                                SendCancelUsageMonitoring(client, options);
-                                break;
-                            case "GetAMRSupportedMeters":
-                                GetAmrSupportedMeters(client);
-                                break;
-                            case "GetHistoryLogByMeterNo":
-                                GetHistoryLogByMeterNo(client, options);
-                                break;
-                            case "GetLatestReadingByMeterNo":
-                                GetLatestReadingByMeterNo(client, options);
-                                break;
-                            case "GetLatestReadings":
-                                GetLatestReadings(client);
-                                break;
-                            case "IntiaiteCDStateRequest":
-                                InitiateCdStateRequest(client, options);
-                                break;
-                            case "InitiateMeterReadByMeterNumber":
-                                InitiateMeterReadByMeterNumber(client, options);
-                                break;
-                            case "MeterAddNotification":
-                                SendMeterNotification(client, options, options.Method);
-                                break;
-                            case "MeterChangedNotification":
-                                SendMeterNotification(client, options, options.Method);
-                                break;
-                            case "MeterRemoveNotification":
-                                SendMeterNotification(client, options, options.Method);
-                                break;
-                            case "MeterRetireNotification":
-                                SendMeterNotification(client, options, options.Method);
-                                break;
-                            case "ServiceLocationChangeNotification":
-                                SendServiceLocationChangeNotification(client, options);
-                                break;
-                            default:
-                                Console.WriteLine("Check the list of methods in the README.md for each Server.");
-                                Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
-                                break;
+                            break;
                         }
 
+                    default:
+                        Console.WriteLine($"{options.Server} not found. Did you mean OA_Server or MDM_Server?");
                         break;
-                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message} - Occured");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception : {ex.InnerException.Message}");
+                }
 
-                default:
-                    Console.WriteLine($"{options.Server} not found. Did you mean OA_Server or MDM_Server?");
-                    break;
+                PrintOptions(options);
             }
         }
 
@@ -302,7 +318,7 @@ namespace MultiSpeakClientV30ac
                     return;
                 }
 
-                var meters = new[] 
+                var meters = new[]
                 {
                     new proxyMR3ac.meter
                     {
@@ -314,10 +330,12 @@ namespace MultiSpeakClientV30ac
                         AMRType = "AMR Type",
                         AMRDeviceType = string.Empty,
                         AMRVendor = string.Empty,
-                        nameplate = new proxyMR3ac.nameplate { dials = 6, dialsSpecified = true, multiplier = 100, multiplierSpecified = true},
-                        utilityInfo = new proxyMR3ac.utilityInfo { accountNumber = "" ,servLoc = "", custID = "" },
-                        //meterConnectionStatus = new proxyMR3ac.meterConnectionStatus { }
-                    }  
+                        nameplate = new proxyMR3ac.nameplate { dials = 6, dialsSpecified = true, multiplier = 100, multiplierSpecified = true },
+                        utilityInfo = new proxyMR3ac.utilityInfo { accountNumber = "AccountNumber", servLoc = "LocationNumber", custID = "customerID" },
+                        meterConnectionStatus = proxyMR3ac.meterConnectionStatus.Connected,
+                        meterConnectionStatusSpecified = true,
+                        remoteReconnectSetting = remoteReconnectSetting.Arm
+                    }
                 };
 
                 proxyMR3ac.errorObject[] response = null;
@@ -451,7 +469,7 @@ namespace MultiSpeakClientV30ac
                     return;
                 }
 
-                var serviceLocations = new[] 
+                var serviceLocations = new[]
                 {
                     new proxyMR3ac.serviceLocation
                     {
@@ -496,7 +514,7 @@ namespace MultiSpeakClientV30ac
                             eaLoc = new proxyMR3ac.eaLoc { name = "27" },
                             linkedTransformer = new proxyMR3ac.linkedTransformer
                             {
-                                bankID = "T63556308002", unitList = new[] { "T-32405" }  
+                                bankID = "T63556308002", unitList = new[] { "T-32405" }
                             },
                             linemanServiceArea = "08",
                          },
@@ -551,6 +569,23 @@ namespace MultiSpeakClientV30ac
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void PrintOptions(object options)
+        {
+            Console.WriteLine("Options >");
+            var t = options.GetType();
+            foreach (var pi in t.GetProperties())
+            {
+                var name = pi.Name;
+                var value = string.Empty;
+                if (pi.GetValue(options) != null)
+                {
+                    value = pi.GetValue(options, null).ToString();
+                }
+
+                Console.WriteLine($"\t{name} : {value}");
             }
         }
 
@@ -613,36 +648,20 @@ namespace MultiSpeakClientV30ac
         /// </param>
         private static void PingUrl(MDM_Server client)
         {
-            try
+            var response = client.PingURL();
+
+            // This MessageID will be the MessageID from the server and not Message from the Client
+            // since the response will contain the out soap header.
+            // This shows how one can use the Header to pass information from the client to the server
+            // and from the server to the client.  The Chunking Examples for GetAllConnectivity is
+            // the best use case I have for how the headers are used.
+            PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
+
+            // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+            // so instead of passing response we paass repsonse.ToArray<object>()
+            if (response != null)
             {
-                // Setting the MessageID from the client as an example
-                client.MultiSpeakMsgHeaderValue.MessageID = "Message from the Client";
-                Console.WriteLine("Request from before request is made : client.MultiSpeakMsgHeaderValue ");
-
-                PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
-
-                var response = client.PingURL();
-
-                // This MessageID will be the MessageID from the server and not Message from the Client
-                // since the response will contain the out soap header.
-                // This shows how one can use the Header to pass information from the client to the server
-                // and from the server to the client.  The Chunking Examples for GetAllConnectivity is
-                // the best use case I have for how the headers are used.
-                Console.WriteLine("Response from Server");
-                Console.WriteLine($"MultiSpeakMsgHeaderValue.MessageID : {client.MultiSpeakMsgHeaderValue.MessageID}");
-                Console.WriteLine("Response from server : client.MultiSpeakMsgHeaderValue ");
-                PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
-
-                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
-                // so instead of passing response we paass repsonse.ToArray<object>()
-                if (response != null)
-                {
-                    PrintErrorObjects(response.ToArray<object>());
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                PrintErrorObjects(response.ToArray<object>());
             }
         }
 
@@ -684,6 +703,40 @@ namespace MultiSpeakClientV30ac
                 PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
             }
         }
+
+        private static void GetCdSupportedMeters(MDM_Server client)
+        {
+            // objectsRemaining and LastSent variables and re-send if required.
+            var objectsRemaining = 1;
+            var lastReceived = string.Empty;
+            while (objectsRemaining > 0)
+            {
+                var response = client.GetCDSupportedMeters(lastReceived);
+                lastReceived = client.MultiSpeakMsgHeaderValue.LastSent;
+                int.TryParse(client.MultiSpeakMsgHeaderValue.ObjectsRemaining, out objectsRemaining);
+                Console.WriteLine($"GetCDSupportedMeters objectsRemaining : {objectsRemaining}");
+                foreach (var item in response)
+                {
+                    Console.WriteLine(item.meterNo);
+                }
+
+                var serializer = new XmlSerializer(typeof(proxyMR3ac.meter[]));
+                string xml;
+
+                using (var sww = new StringWriter())
+                {
+                    using (var writer = XmlWriter.Create(sww))
+                    {
+                        serializer.Serialize(writer, response);
+                        xml = sww.ToString();
+                    }
+                }
+
+                WriteToFile(xml, $"GetCDSupportedMeters.{objectsRemaining}", "3AC");
+                PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
+            }
+        }
+
 
         /// <summary>
         /// The get history log by meter no.
@@ -817,6 +870,67 @@ namespace MultiSpeakClientV30ac
             WriteToFile(xml, $"InitiateMeterReadByMeterNumber.{options.Device}", "3AC");
         }
 
+
+        private static void InitiateUsageMonitoring(MR_Server client, Options options)
+        {
+            string[] meterNos = { options.Device };
+            var transactionId = Guid.NewGuid().ToString();
+            var response = client.InitiateUsageMonitoring(meterNos, options.ResponseUrl, transactionId);
+
+            PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
+
+            // We might not get a response, if so exit
+            if (response == null)
+            {
+                return;
+            }
+
+            // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+            // so instead of passing response we paass repsonse.ToArray<object>()
+            PrintErrorObjects(response.ToArray<object>());
+            var serializer = new XmlSerializer(typeof(proxyMR3ac.errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            WriteToFile(xml, $"InitiateUsageMonitoring.{options.Device}", "3AC");
+        }
+
+        private static void InitiateDisconnectedStatus(MR_Server client, Options options)
+        {
+            string[] meterNos = { options.Device };
+            var response = client.InitiateDisconnectedStatus(meterNos);
+
+            PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
+
+            // We might not get a response, if so exit
+            if (response == null)
+            {
+                return;
+            }
+
+            // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+            // so instead of passing response we paass repsonse.ToArray<object>()
+            PrintErrorObjects(response.ToArray<object>());
+            var serializer = new XmlSerializer(typeof(proxyMR3ac.errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            WriteToFile(xml, $"InitiateDisconnectedStatus.{options.Device}", "3AC");
+        }
         #endregion
 
         #region GetCommands
@@ -1466,8 +1580,8 @@ namespace MultiSpeakClientV30ac
                 var expirationTime =
                     (float)requestDate.AddMinutes(30)
                         .ToOADate(); // TimeStamp is unix timestamp, so we use ToOADate to get a double and cast to float. 
-                // var response =
-                //    client.Initiate(cdstates, responseUrl, transactionId, expirationTime);
+                                     // var response =
+                                     //    client.Initiate(cdstates, responseUrl, transactionId, expirationTime);
                 PrintMultiSpeakMsgHeader(client.MultiSpeakMsgHeaderValue);
 
                 // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
