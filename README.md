@@ -11,8 +11,6 @@
 
 ### Sample Calls
 
-
-
  ## Dependencies 
 
  ## OA_Server Supported Methods

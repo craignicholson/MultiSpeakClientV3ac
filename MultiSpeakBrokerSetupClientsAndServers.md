@@ -33,6 +33,7 @@ List of commands the FakeCISMSpeak3 vendor will send to the AMI system
 - MeterRemoveNotification
 - InitiateUsageMonitoring
 - InitiateDisconnectedStatus
+
 - GetAMRSupportedMeters
 - GetLatestReadingByMeterNo
 - GetCDSupportedMeters

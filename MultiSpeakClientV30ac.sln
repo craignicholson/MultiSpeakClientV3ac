@@ -7,6 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiSpeakClientV30ac", "Mu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1B7B1D6A-C5CD-4945-AD09-D56A3A644BE1}"
 	ProjectSection(SolutionItems) = preProject
+		ElectSolveTests.txt = ElectSolveTests.txt
 		LandisGyrTest.txt = LandisGyrTest.txt
 		Milsoft_Tests.txt = Milsoft_Tests.txt
 		README.md = README.md

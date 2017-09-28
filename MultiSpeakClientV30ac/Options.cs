@@ -13,6 +13,7 @@ namespace MultiSpeakClientV30ac
 
     /// <summary>
     /// The options for the CLI Interface via NuGet CommandLineParser used to help manage the CLI Interface.
+    /// Expected parameters will be listed when users leaves off all options.
     /// </summary>
     public class Options
     {

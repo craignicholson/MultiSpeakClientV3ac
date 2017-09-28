@@ -1,0 +1,30 @@
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/SimulatorFakeCIS/MultiSpeak/30ac/MDM_Server.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m   ReadingChangedNotification -d 100 
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/CB_Server.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m   ReadingChangedNotification -d 100
+When Broker Receives a Notification and there is no TransactionId to be matched this happens
+
+ errorString : Failed to receive request: Fail to update database for transactionID -687cd480-47ae-4b41-ad2c-bb1ec3ce88b5. 
+ Reason:ServerResponseUpdate failed for (filter.Eq("ClientTransactionID", transactionId) & filter.Eq("Status", "WAIT")) 
+ transactionId:687cd480-47ae-4b41-ad2c-bb1ec3ce88b5, 
+ ServerResponse:
+ <soap:Envelope 
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<soap:Header>
+	<MultiSpeakMsgHeader Version="3.0AC" UserID="UNITILTST" Pwd="Unitil1!" AppName="MultiSpeakClient30ac" AppVersion="1.0beta" Company="ElectSolve" MessageID="00000000-0000-0000-0000-000000000000" xmlns="http://www.multispeak.org/Version_3.0" />
+</soap:Header>
+<soap:Body>
+	<ReadingChangedNotification xmlns="http://www.multispeak.org/Version_3.0">
+		<changedMeterReads>
+		<meterRead errorString="">
+			<comments />
+			<meterNo>100</meterNo>
+			<deviceID />
+			<kVAr>1</kVAr>
+		</meterRead>
+		</changedMeterReads>
+		<transactionID>687cd480-47ae-4b41-ad2c-bb1ec3ce88b5</transactionID>
+	</ReadingChangedNotification>
+</soap:Body>
+</soap:Envelope>

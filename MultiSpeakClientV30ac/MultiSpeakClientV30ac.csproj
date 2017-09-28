@@ -47,7 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CbServerRequests.cs" />
+    <Compile Include="EaServerRequests.cs" />
+    <Compile Include="MdmServerRequests.cs" />
+    <Compile Include="MrServerRequests.cs" />
+    <Compile Include="OaServerRequests.cs" />
+    <Compile Include="OdServerRequests.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="PrintClassStdOut.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -85,6 +92,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="XmlUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
