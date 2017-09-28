@@ -1,0 +1,203 @@
+
+cd C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug
+
+Landis
+
+Client directly to Landis
+
+cd C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug
+ 
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m  PingUrl
+ 
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetAMRSupportedMeters
+ 
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetCDSupportedMeters
+
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetHistoryLogByMeterNo -d 100
+
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetHistoryLogByMeterNo -d LG901182274
+
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetLatestReadingByMeterNo -d 100
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetLatestReadingByMeterNo -d LG901182274
+
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 100 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d M2154890647 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d M2154890648 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d M2154890663 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d D004018C -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d F07DF930 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d F0091875 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d AnthonyMIFTestK -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d F0201546 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 5019F9C8 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d M2154852990 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 80A10113 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d F016CB40 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d LG101182279 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d LG901182274 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 500D5B74 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d F03275F6 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 40BC4175 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 81200634 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 10710000 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 00101 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 500B9CED -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d F033C324 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d F06C60B1 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+
+
+Client to MultiSpeakBroker to Landis
+
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m  PingUrl
+ 
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetAMRSupportedMeters
+ 
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetCDSupportedMeters
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetHistoryLogByMeterNo -d 100
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetHistoryLogByMeterNo -d LG901182274
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetLatestReadingByMeterNo -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetLatestReadingByMeterNo -d LG901182274
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateMeterReadByMeterNumber -d 100 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateMeterReadByMeterNumber -d 100 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/CB_Server.asmx
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateUsageMonitoring -d 100 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/MDM_Server.asmx
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateDisconnectedStatus -d 100
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  ServiceLocationChangeNotification -d 100
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  CancelDisconnectedStatus -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  MeterAddNotification -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  MeterChangedNotification -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  MeterRemoveNotification -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  MeterRetireNotification -d 100
+
+
+
+Test 1:
+MDMWebAPI is setup. 
+
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: #100 might not be in the FakeCISMSpeak3 system 
+		or might not have Readsource assigned.
+        nounType :
+        eventTime : 9/27/2017 2:28:52 PM
+        eventTimeSpecified : True
+
+Test 2:
+Remove WebAPI Credentials
+
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: Client - FakeCISMSpeak3 does not have API.
+        nounType :
+        eventTime : 9/27/2017 2:38:29 PM
+        eventTimeSpecified : True
+TASK FINISHED
+Execution Time : 00:00:01.8139689
+
+Test 3:
+Add MSpeak3 ServiceLocationChangedNotification, no routing.
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: Client - FakeCISMSpeak3 does not have API.
+        nounType :
+        eventTime : 9/27/2017 2:41:27 PM
+        eventTimeSpecified : True
+
+Test 4:
+Add MDM WebAPI back
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: #100 might not be in the FakeCISMSpeak3 system or might not have Readsource assigned.
+        nounType :
+        eventTime : 9/27/2017 2:42:23 PM
+        eventTimeSpecified : True
+
+SELECT
+ReadSourceId, *
+FROM
+MDM.dbo.Meter
+WHERE MeterIdentifier='100'
+
+SELECT * FROM MDM.dbo.ReadSource
+WHERE ReadSourceID = 17
+
+INSERT INTO MDM.dbo.Location VALUES
+(1,100,NULL, NULL, NULL, NULL, NULL, 1, GetDate(), NULL, NULL)
+
+SELECT * FROM MDM.dbo.Location
+WHERE LocationNumber = '100'
+
+UPDATE MDM.dbo.Meter
+SET LocationId = 42944
+WHERE MeterIdentifier = '100'
+
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Location Number 100. Reason: Cannot find subcriber for method - ServiceLocationChangedNotification. 
+		Either Landis & Gyr is not setup or does not have receiver for this method
+        nounType :
+        eventTime : 9/27/2017 2:49:24 PM
+        eventTimeSpecified : True
+
+
+UPDATE MDM.dbo.ReadSource
+SET ReadSourceDescription = 'Landis'
+WHERE ReadSourceDescription = 'Landis & Gyr'
+
+Update VendorName in Vendor  Edit for Landis & Gyr to Landis
+
+Re-Add the MSpeak3 ServiceLocationChangedNotification
+
+SUCCESS
+
+MultiSpeakMsgHeader Server >
+        Version : 3.0AC
+        UserID : FakeCISMSpeak3
+        Pwd : FakeCISMSpeak3
+        AppName : MultiSpeakClient30ac
+        AppVersion : 1.0beta
+        Company : FakeCISMSpeak3
+        CSUnits : feet
+        CoordinateSystem :
+        Datum :
+        SessionID :
+        PreviousSessionID :
+        ObjectsRemaining :
+        LastSent :
+        RegistrationID :
+        AuditID :
+        MessageID :
+        TimeStamp : 1/1/0001 12:00:00 AM
+        TimeStampSpecified : False
+        BuildString :
+        AnyAttr :
+        EncodedMustUnderstand : 0
+        EncodedMustUnderstand12 : 0
+        MustUnderstand : False
+        Actor :
+        Role :
+        DidUnderstand : True
+        EncodedRelay : 0
+        Relay : False
+TASK FINISHED
+Execution Time : 00:00:14.7539258
+
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  CancelDisconnectedStatus -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  MeterAddNotification -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  MeterChangedNotification -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  MeterRemoveNotification -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  MeterRetireNotification -d 100
+
+
+
+
