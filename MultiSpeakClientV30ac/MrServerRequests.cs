@@ -24,6 +24,17 @@ namespace MultiSpeakClientV30ac
     public static class MrServerRequests
     {
         /// <summary>
+        /// We Failed
+        /// This is a test to see how all this works passing the message back to the caller.
+        /// </summary>
+        private const string Fail = "FAIL";
+
+        /// <summary>
+        /// We passed
+        /// </summary>
+        private const string Successfull = "SUCCESS";
+        
+        /// <summary>
         /// The log file directory.
         /// </summary>
         private static string logFileDirectory;
@@ -65,11 +76,12 @@ namespace MultiSpeakClientV30ac
         /// <param name="version">
         /// The version.
         /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string RunCommand(Options options, string appName, string appVersion, string version)
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        public static void RunCommand(Options options, string appName, string appVersion, string version, out string message)
         {
+            message = string.Empty;
             var client = new MR_Server { Url = options.EndPoint };
             var header = new MultiSpeakMsgHeader
             {
@@ -88,52 +100,54 @@ namespace MultiSpeakClientV30ac
             switch (options.Method)
             {
                 case "CancelDisconnectedStatus":
-                    CancelDisconnectedStatus(client, options);
+                    message = CancelDisconnectedStatus(client, options);
                     break;
                 case "CancelUsageMonitoring":
-                    CancelUsageMonitoring(client, options);
+                    message = CancelUsageMonitoring(client, options);
                     break;
                 case "GetAMRSupportedMeters":
-                    GetAmrSupportedMeters(client);
+                    message = GetAmrSupportedMeters(client);
                     break;
                 case "GetHistoryLogByMeterNo":
-                    GetHistoryLogByMeterNo(client, options);
+                    message = GetHistoryLogByMeterNo(client, options);
                     break;
                 case "GetLatestReadingByMeterNo":
-                    GetLatestReadingByMeterNo(client, options);
+                    message = GetLatestReadingByMeterNo(client, options);
                     break;
                 case "GetLatestReadings":
-                    GetLatestReadings(client);
+                    message = GetLatestReadings(client);
                     break;
                 case "IntiaiteCDStateRequest":
+                    message = "IntiaiteCDStateRequest is in MDM_Server and not MR_Server";
                     Console.WriteLine($"{options.Method} is located in MDM_Server and not MR_Server, change -m to -m MDM_Server and try again.");
                     break;
                 case "InitiateConnectDisconnect":
+                    message = "InitiateConnectDisconnect is in MDM_Server and not MR_Server";
                     Console.WriteLine($"{options.Method} is located in MDM_Server and not MR_Server, change -m to -m MDM_Server and try again.");
                     break;
                 case "InitiateMeterReadByMeterNumber":
-                    InitiateMeterReadByMeterNumber(client, options);
+                    message = InitiateMeterReadByMeterNumber(client, options);
                     break;
                 case "InitiateUsageMonitoring":
-                    InitiateUsageMonitoring(client, options);
+                    message = InitiateUsageMonitoring(client, options);
                     break;
                 case "InitiateDisconnectedStatus":
-                    InitiateDisconnectedStatus(client, options);
+                    message = InitiateDisconnectedStatus(client, options);
                     break;
                 case "MeterAddNotification":
-                    MeterNotification(client, options);
+                    message = MeterNotification(client, options);
                     break;
                 case "MeterChangedNotification":
-                    MeterNotification(client, options);
+                    message = MeterNotification(client, options);
                     break;
                 case "MeterRemoveNotification":
-                    MeterNotification(client, options);
+                    message = MeterNotification(client, options);
                     break;
                 case "MeterRetireNotification":
-                    MeterNotification(client, options);
+                    message = MeterNotification(client, options);
                     break;
                 case "ServiceLocationChangeNotification":
-                    ServiceLocationChangeNotification(client, options);
+                    message = ServiceLocationChangeNotification(client, options);
                     break;
                 default:
                     Console.WriteLine("Check the list of methods in the README.md for each Server.");
@@ -143,27 +157,33 @@ namespace MultiSpeakClientV30ac
             }
 
             // TODO: I wonder if I can just output the Print for MultiSpeakHeader here for the client response.
-            return "Success";
         }
 
         /// <summary>
         /// CancelDisconnectedStatus to MR_Server
         /// </summary>
-        /// <param name="client">Expects MR_Server</param>
-        /// <param name="options">Expects options.Device</param>
-        private static void CancelDisconnectedStatus(MR_Server client, Options options)
+        /// <param name="client">
+        /// Expects MR_Server
+        /// </param>
+        /// <param name="options">
+        /// Expects options.Device
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string CancelDisconnectedStatus(MR_Server client, Options options)
         {
             try
             {
                 if (options == null)
                 {
-                    return;
+                    return Fail;
                 }
 
                 if (options.Device == null)
                 {
                     Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 var meterNos = new[] { options.Device };
@@ -175,11 +195,17 @@ namespace MultiSpeakClientV30ac
                 if (response != null)
                 {
                     PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                    
+                    // Quick Hack to get the message out
+                    return response[0].errorString;
                 }
+
+                return Successfull;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return Fail;
             }
         }
 
@@ -188,19 +214,19 @@ namespace MultiSpeakClientV30ac
         /// </summary>
         /// <param name="client">Expects MR_Server</param>
         /// <param name="options">Exports option.Device</param>
-        private static void CancelUsageMonitoring(MR_Server client, Options options)
+        private static string CancelUsageMonitoring(MR_Server client, Options options)
         {
             try
             {
                 if (options == null)
                 {
-                    return;
+                    return Fail;
                 }
 
                 if (options.Device == null)
                 {
                     Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 var meterNos = new[] { options.Device };
@@ -213,11 +239,15 @@ namespace MultiSpeakClientV30ac
                 if (response != null)
                 {
                     PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                    return response[0].errorString;
                 }
+
+                return Successfull;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return Fail;
             }
         }
 
@@ -227,7 +257,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="client">
         /// The client.
         /// </param>
-        private static void GetAmrSupportedMeters(MR_Server client)
+        private static string GetAmrSupportedMeters(MR_Server client)
         {
             // objectsRemaining and LastSent variables and re-send if required.
             var objectsRemaining = 1;
@@ -258,6 +288,9 @@ namespace MultiSpeakClientV30ac
                 XmlUtil.WriteToFile(xml, $"GetAMRSupportedMeters.{objectsRemaining}", "3AC", logFileDirectory);
                 PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
+
+            // TODO: This needs work to watch for fail and success
+            return Successfull;
         }
 
         /// <summary>
@@ -269,7 +302,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void GetHistoryLogByMeterNo(MR_Server client, Options options)
+        private static string GetHistoryLogByMeterNo(MR_Server client, Options options)
         {
             var response = client.GetHistoryLogByMeterNo(options.Device, DateTime.Now.Subtract(TimeSpan.FromDays(1000)), DateTime.Now);
             var serializer = new XmlSerializer(typeof(historyLog[]));
@@ -287,6 +320,9 @@ namespace MultiSpeakClientV30ac
             XmlUtil.WriteToFile(xml, $"GetHistoryLogByMeterNo.{options.Device}", "3AC", logFileDirectory);
             PrintClassStdOut.PrintObject(
                 client.MultiSpeakMsgHeaderValue);
+
+            // TODO: This needs work to watch for fail and success
+            return Successfull;
         }
 
         /// <summary>
@@ -298,7 +334,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void GetLatestReadingByMeterNo(MR_Server client, Options options)
+        private static string GetLatestReadingByMeterNo(MR_Server client, Options options)
         {
             var response = client.GetLatestReadingByMeterNo(options.Device);
             var serializer = new XmlSerializer(typeof(meterRead));
@@ -316,6 +352,9 @@ namespace MultiSpeakClientV30ac
             XmlUtil.WriteToFile(xml, $"GetLatestReadingByMeterNo.{options.Device}", "3AC", logFileDirectory);
             PrintClassStdOut.PrintObject(
                 client.MultiSpeakMsgHeaderValue);
+
+            // TODO: This needs work to watch for fail and success
+            return Successfull;
         }
 
         /// <summary>
@@ -324,7 +363,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="client">
         /// The client.
         /// </param>
-        private static void GetLatestReadings(MR_Server client)
+        private static string GetLatestReadings(MR_Server client)
         {
             // objectsRemaining and LastSent variables and re-send if required.
             var objectsRemaining = 1;
@@ -352,6 +391,9 @@ namespace MultiSpeakClientV30ac
                 PrintClassStdOut.PrintObject(
                     client.MultiSpeakMsgHeaderValue);
             }
+
+            // TODO: This needs work to watch for fail and success
+            return Successfull;
         }
 
         /// <summary>
@@ -363,7 +405,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void InitiateMeterReadByMeterNumber(MR_Server client, Options options)
+        private static string InitiateMeterReadByMeterNumber(MR_Server client, Options options)
         {
             string[] meterNos = { options.Device };
             var transactionId = Guid.NewGuid().ToString();
@@ -376,7 +418,7 @@ namespace MultiSpeakClientV30ac
             // We might not get a response, if so exit
             if (response == null)
             {
-                return;
+                return Fail;
             }
 
             // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
@@ -394,14 +436,17 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"InitiateMeterReadByMeterNumber.{options.Device}", "3AC", logFileDirectory);
+
+            // TODO: This needs work to watch for fail and success
+            return Successfull;
         }
         
         /// <summary>
-        /// Initiate Disconnected Status
+        /// Initiate Disconnected Fail
         /// </summary>
         /// <param name="client">the client</param>
         /// <param name="options">expected options</param>
-        private static void InitiateDisconnectedStatus(MR_Server client, Options options)
+        private static string InitiateDisconnectedStatus(MR_Server client, Options options)
         {
             string[] meterNos = { options.Device };
             var response = client.InitiateDisconnectedStatus(meterNos);
@@ -411,7 +456,7 @@ namespace MultiSpeakClientV30ac
             // We might not get a response, if so exit
             if (response == null)
             {
-                return;
+                return Fail;
             }
 
             // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
@@ -429,6 +474,9 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"InitiateDisconnectedStatus.{options.Device}", "3AC", logFileDirectory);
+
+            // TODO: This needs work to watch for fail and success
+            return Successfull;
         }
 
         /// <summary>
@@ -436,7 +484,7 @@ namespace MultiSpeakClientV30ac
         /// </summary>
         /// <param name="client">the client</param>
         /// <param name="options">expected options</param>
-        private static void InitiateUsageMonitoring(MR_Server client, Options options)
+        private static string InitiateUsageMonitoring(MR_Server client, Options options)
         {
             string[] meterNos = { options.Device };
             var transactionId = Guid.NewGuid().ToString();
@@ -448,7 +496,7 @@ namespace MultiSpeakClientV30ac
             // We might not get a response, if so exit
             if (response == null)
             {
-                return;
+                return Successfull;
             }
 
             // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
@@ -466,6 +514,9 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"InitiateUsageMonitoring.{options.Device}", "3AC", logFileDirectory);
+
+            // TODO: This needs work to watch for fail and success
+            return xml;
         }
 
         /// <summary>
@@ -473,19 +524,19 @@ namespace MultiSpeakClientV30ac
         /// </summary>
         /// <param name="client">Expects MR_Server</param>
         /// <param name="options">Expects options.Device</param>
-        private static void MeterNotification(MR_Server client, Options options)
+        private static string MeterNotification(MR_Server client, Options options)
         {
             try
             {
                 if (options == null)
                 {
-                    return;
+                    return Fail;
                 }
 
                 if (options.Device == null)
                 {
                     Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 var meters = new[]
@@ -533,14 +584,18 @@ namespace MultiSpeakClientV30ac
 
                 // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
                 // so instead of passing response we pass repsonse.ToArray<object>()
-                if (response != null)
+                if (response == null)
                 {
-                    PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                    return Successfull;
                 }
+
+                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                return response[0].errorString;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return Fail;
             }
         }
 
@@ -549,19 +604,19 @@ namespace MultiSpeakClientV30ac
         /// </summary>
         /// <param name="client">Expects the MR_Server Client</param>
         /// <param name="options">Expects a deviceId</param>
-        private static void ServiceLocationChangeNotification(MR_Server client, Options options)
+        private static string ServiceLocationChangeNotification(MR_Server client, Options options)
         {
             try
             {
                 if (options == null)
                 {
-                    return;
+                    return Fail;
                 }
 
                 if (options.Device == null)
                 {
                     Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 var serviceLocations = new[]
@@ -624,14 +679,18 @@ namespace MultiSpeakClientV30ac
 
                 // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
                 // so instead of passing response we pass repsonse.ToArray<object>()
-                if (response != null)
+                if (response == null)
                 {
-                    PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                    return Successfull;
                 }
+
+                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                return response[0].errorString;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return Fail;
             }
         }
     }

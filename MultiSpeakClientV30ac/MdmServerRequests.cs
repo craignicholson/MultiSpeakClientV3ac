@@ -24,6 +24,17 @@ namespace MultiSpeakClientV30ac
     public static class MdmServerRequests
     {
         /// <summary>
+        /// The status of fail when parameters are missing.
+        /// This is a test to see how all this works passing the message back to the caller.
+        /// </summary>
+        private const string Fail = "FAIL";
+
+        /// <summary>
+        /// We passed
+        /// </summary>
+        private const string Successfull = "SUCCESS";
+
+        /// <summary>
         /// The log file directory.
         /// </summary>
         private static string logFileDirectory;
@@ -65,11 +76,12 @@ namespace MultiSpeakClientV30ac
         /// <param name="version">
         /// The version.
         /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string RunCommand(Options options, string appName, string appVersion, string version)
+        /// <param name="message">
+        /// Message can be error or generic message for fail or success.
+        /// </param>
+        public static void RunCommand(Options options, string appName, string appVersion, string version, out string message)
         {
+            message = string.Empty;
             var client = new MDM_Server() { Url = options.EndPoint, };
             var header = new MultiSpeakMsgHeader()
             {
@@ -90,25 +102,25 @@ namespace MultiSpeakClientV30ac
             switch (options.Method)
             {
                 case "GetCDMeterState":
-                    GetCdMeterState(client, options);
+                    message = GetCdMeterState(client, options);
                     break;
                 case "GetCDSupportedMeters":
-                    GetCdSupportedMeters(client);
+                    message = GetCdSupportedMeters(client);
                     break;
                 case "InitiateConnectDisconnect":
-                    InitiateConnectDisconnect(client, options);
+                    message = InitiateConnectDisconnect(client, options);
                     break;
                 case "InitiateCDStateRequest":
-                    InitiateCdStateRequest(client, options);
+                    message = InitiateCdStateRequest(client, options);
                     break;
                 case "InitiateOutageDetectionEventRequest":
-                    InitiateOutageDetectionEventRequest(client, options);
+                    message = InitiateOutageDetectionEventRequest(client, options);
                     break;
                 case "PingUrl":
-                    PingUrl(client);
+                    message = PingUrl(client);
                     break;
                 case "ReadingChangedNotification":
-                    ReadingChangedNotification(client, options);
+                    message = ReadingChangedNotification(client, options);
                     break;
                 default:
                     Console.WriteLine(
@@ -118,7 +130,6 @@ namespace MultiSpeakClientV30ac
             }
 
             // TODO: I wonder if I can just output the Print for MultiSpeakHeader here for the client response.
-            return "Success";
         }
 
         /// <summary>
@@ -126,17 +137,17 @@ namespace MultiSpeakClientV30ac
         /// </summary>
         /// <param name="client">the client</param>
         /// <param name="options">Expects options.Device</param>
-        private static void GetCdMeterState(MDM_Server client, Options options)
+        private static string GetCdMeterState(MDM_Server client, Options options)
         {
             if (options == null)
             {
-                return;
+                return Fail;
             }
 
             if (options.Device == null)
             {
                 Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                return;
+                return Fail;
             }
 
             var response = client.GetCDMeterState(options.Device);
@@ -154,16 +165,18 @@ namespace MultiSpeakClientV30ac
                     xml = sww.ToString();
                 }
             }
+
             XmlUtil.WriteToFile(xml, $"GetCDMeterState.{options.Device}", "3AC", logFileDirectory);
             PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             PrintClassStdOut.PrintObject(response);
+            return Successfull;
         }
 
         /// <summary>
         /// Get CD Supported Meters
         /// </summary>
         /// <param name="client">client we need</param>
-        private static void GetCdSupportedMeters(MDM_Server client)
+        private static string GetCdSupportedMeters(MDM_Server client)
         {
             // objectsRemaining and LastSent variables and re-send if required.
             var objectsRemaining = 1;
@@ -196,6 +209,9 @@ namespace MultiSpeakClientV30ac
                 XmlUtil.WriteToFile(xml, $"GetCDSupportedMeters.{objectsRemaining}", "3AC", logFileDirectory);
                 PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
+
+            // TODO:
+            return Successfull;
         }
 
         /// <summary>
@@ -207,7 +223,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void InitiateCdStateRequest(MDM_Server client, Options options)
+        private static string InitiateCdStateRequest(MDM_Server client, Options options)
         {
             var cdstates = new[]
             {
@@ -225,20 +241,20 @@ namespace MultiSpeakClientV30ac
             {
                 if (options == null)
                 {
-                    return;
+                    return Fail;
                 }
 
                 if (options.Device == null)
                 {
                     Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 if (options.ResponseUrl == null)
                 {
                     Console.WriteLine(
                         "ResponseUrl is missing. Please add a ResponseUrl : -r http://yourserver/NOT_Server.asmx");
-                    return;
+                    return Fail;
                 }
 
                 var requestDate = DateTime.Now;
@@ -253,33 +269,44 @@ namespace MultiSpeakClientV30ac
 
                 // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
                 // so instead of passing response we paass repsonse.ToArray<object>()
-                if (response != null)
+                if (response == null)
                 {
-                    PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                    return Successfull;
                 }
+
+                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                return Fail;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return Fail;
             }
         }
 
         /// <summary>
         /// Initiate Connect Disconnect for a meter
         /// </summary>
-        /// <param name="client">the client</param>
-        /// <param name="options">expects options.Device</param>
-        private static void InitiateConnectDisconnect(MDM_Server client, Options options)
+        /// <param name="client">
+        /// the client
+        /// </param>
+        /// <param name="options">
+        /// expects options.Device
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string InitiateConnectDisconnect(MDM_Server client, Options options)
         {
             if (options == null)
             {
-                return;
+                return Fail;
             }
 
             if (options.Device == null)
             {
                 Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                return;
+                return Fail;
             }
 
             var connectDisconnectEvents = new[]
@@ -298,7 +325,7 @@ namespace MultiSpeakClientV30ac
             // We might not get a response, if so exit
             if (response == null)
             {
-                return;
+                return Successfull;
             }
 
             // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
@@ -316,6 +343,7 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"InitiateConnectDisconnect.{options.Device}", "3AC", logFileDirectory);
+            return xml;
         }
 
 
@@ -324,25 +352,25 @@ namespace MultiSpeakClientV30ac
         /// </summary>
         /// <param name="client">Expects MDM_Server, or MR_Server clients.</param>
         /// <param name="options">Requires Device and ResponseUrl</param>
-        private static void InitiateOutageDetectionEventRequest(MDM_Server client, Options options = null)
+        private static string InitiateOutageDetectionEventRequest(MDM_Server client, Options options = null)
         {
             try
             {
                 if (options == null)
                 {
-                    return;
+                    return Fail;
                 }
 
                 if (options.Device == null)
                 {
                     Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 if (options.ResponseUrl == null)
                 {
                     Console.WriteLine("ResponseUrl is missing. Please add a ResponseUrl : -r http://yourserver/NOT_Server.asmx");
-                    return;
+                    return Fail;
                 }
 
                 var meters = new[] { options.Device };
@@ -364,14 +392,18 @@ namespace MultiSpeakClientV30ac
 
                 // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
                 // so instead of passing response we paass repsonse.ToArray<object>()
-                if (response != null)
+                if (response == null)
                 {
-                    PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                    return Successfull;
                 }
+
+                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                return Fail;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return Fail;
             }
         }
 
@@ -381,7 +413,7 @@ namespace MultiSpeakClientV30ac
         /// <param name="client">
         /// The client.
         /// </param>
-        private static void PingUrl(MDM_Server client)
+        private static string PingUrl(MDM_Server client)
         {
             var response = client.PingURL();
 
@@ -394,10 +426,13 @@ namespace MultiSpeakClientV30ac
 
             // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
             // so instead of passing response we paass repsonse.ToArray<object>()
-            if (response != null)
+            if (response == null)
             {
-                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                return Successfull;
             }
+
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            return response[0].errorString;
         }
 
         /// <summary>
@@ -405,19 +440,19 @@ namespace MultiSpeakClientV30ac
         /// </summary>
         /// <param name="client">the client</param>
         /// <param name="options">out options</param>
-        private static void ReadingChangedNotification(MDM_Server client, Options options)
+        private static string ReadingChangedNotification(MDM_Server client, Options options)
         {
             try
             {
                 if (options == null)
                 {
-                    return;
+                    return Fail;
                 }
 
                 if (options.Device == null)
                 {
                     Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 var meterReads = new[]
@@ -442,14 +477,18 @@ namespace MultiSpeakClientV30ac
 
                 // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
                 // so instead of passing response we pass repsonse.ToArray<object>()
-                if (response != null)
+                if (response == null)
                 {
-                    PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                    return Successfull;
                 }
+
+                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                return response[0].errorString;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return Fail;
             }
         }
     }

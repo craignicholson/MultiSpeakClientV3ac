@@ -40,6 +40,11 @@ namespace MultiSpeakClientV30ac
         private const string AppVersion = "1.0beta";
 
         /// <summary>
+        /// The logger we will use to log
+        /// </summary>
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        /// <summary>
         /// Main Entry Point into Application
         /// </summary>
         /// <param name="args">Arguments sent in to call the MultiSpeak Methods</param>
@@ -57,13 +62,28 @@ namespace MultiSpeakClientV30ac
 
             var wallTime = new System.Diagnostics.Stopwatch();  // Get the wall time for sampling stats
             wallTime.Start();
-            ProcessArgs(options);
+            var message = ProcessArgs(options);
             wallTime.Stop();
 
-            // TODO: Save Server, Method, Elasped time to log file for performance monitoring
-            // TODO: Figure out a way to PASS/FAIL all the methods.
-            const string Result = "PASS";
-            Console.WriteLine($"{Result} | {options.Server} | {options.Method} |  {wallTime.Elapsed} | {options.EndPoint}");
+            // Console.WriteLine($"{options.Server} | {options.Method} |  {wallTime.Elapsed} | {Result} ");
+            Log.Info($"HEADER | {options.Method}-{options.Server} | {wallTime.Elapsed}");
+            Log.Info($"Detail | Message | {message}");
+            var t = options.GetType();
+            foreach (var pi in t.GetProperties())
+            {
+                var name = pi.Name;
+                var value = string.Empty;
+                if (pi.GetValue(options) != null)
+                {
+                    value = pi.GetValue(options, null).ToString();
+                }
+
+                if (value != string.Empty)
+                {
+                    Log.Info($"Detail | {name} | {value}");
+                }
+            }
+
             Console.WriteLine("TASK FINISHED");
         }
 
@@ -88,9 +108,15 @@ namespace MultiSpeakClientV30ac
         /// <summary>
         /// ProcessArgs maps the Server to correct class and lets the class processes the arguments and execute the commands.
         /// </summary>
-        /// <param name="options">Options are the the CLI options, you can run the program without options to view the help.</param>
-        private static void ProcessArgs(Options options)
+        /// <param name="options">
+        /// Options are the the CLI options, you can run the program without options to view the help.
+        /// </param>
+        /// <returns>
+        /// error string, which might be just a value and not an error <see cref="string"/>.
+        /// </returns>
+        private static string ProcessArgs(Options options)
         {
+            var message = string.Empty;
             try
             {
                 switch (options.Server)
@@ -106,20 +132,20 @@ namespace MultiSpeakClientV30ac
                         {
                             EaServerRequests.SetLogFileDirectory(FileDirectory);
                             EaServerRequests.RunCommand(options, AppName, AppVersion, Version);
-                            throw new NotImplementedException($"{options.Server} Server is not available. You might have used the wrong server");
+                            throw new NotImplementedException($"{options.Server} Server is not available. Not Implmented in this MultiSpeakClientV3ac");
                         }
 
                     case "MDM_Server":
                         {
                             MdmServerRequests.SetLogFileDirectory(FileDirectory);
-                            MdmServerRequests.RunCommand(options, AppName, AppVersion, Version);
+                            MdmServerRequests.RunCommand(options, AppName, AppVersion, Version, out message);
                             break;
                         }
 
                     case "MR_Server":
                         {
                             MrServerRequests.SetLogFileDirectory(FileDirectory);
-                            MrServerRequests.RunCommand(options, AppName, AppVersion, Version);
+                            MrServerRequests.RunCommand(options, AppName, AppVersion, Version, out message);
                             break;
                         }
 
@@ -141,16 +167,21 @@ namespace MultiSpeakClientV30ac
                         Console.WriteLine($"{options.Server} not found. Did you mean OA_Server or MDM_Server?");
                         break;
                 }
+
+                return message;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message} - Occured");
+                message = ex.Message;
                 if (ex.InnerException != null)
                 {
                     Console.WriteLine($"Inner Exception : {ex.InnerException.Message}");
+                    message = ex.InnerException.Message;
                 }
 
                 PrintClassStdOut.PrintObject(options);
+                return message;
             }
         }
     }
