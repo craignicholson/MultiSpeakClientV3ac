@@ -83,7 +83,7 @@ namespace MultiSpeakClientV30ac
 
             switch (options.Method)
             {
-                case "CDStateChangedNotification":
+                case "CDStateChangeNotification":
                     CdStateChangedNotification(client, options);
                     break;
                 default:
@@ -114,11 +114,18 @@ namespace MultiSpeakClientV30ac
                 return;
             }
 
+            if (options.TransactionId == null)
+            {
+                Console.WriteLine("TransactionId is missing. Please add a TransactionId: -t 0525376f-291f-423b-93ec-1f92b4535468");
+                return;
+            }
+
             var meterNo = options.Device;
 
-            // Set them all to Disconnected
+            // Set all StateChange all to Disconnected to this test stub.
+            // TODO: Add ability to send in loadActionCodes
             const loadActionCode StateChange = loadActionCode.Open;
-            var transactionId = Guid.NewGuid().ToString();
+            var transactionId = options.TransactionId;
             var errorString = string.Empty;
             client.CDStateChangedNotification(meterNo, StateChange, transactionId, errorString);
         }

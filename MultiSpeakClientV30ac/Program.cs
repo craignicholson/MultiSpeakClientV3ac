@@ -59,7 +59,7 @@ namespace MultiSpeakClientV30ac
             wallTime.Start();
             ProcessArgs(options);
             wallTime.Stop();
-            
+
             // TODO: Save Server, Method, Elasped time to log file for performance monitoring
             // TODO: Figure out a way to PASS/FAIL all the methods.
             const string Result = "PASS";
@@ -99,7 +99,7 @@ namespace MultiSpeakClientV30ac
                         {
                             CbServerRequests.SetLogFileDirectory(FileDirectory);
                             CbServerRequests.RunCommand(options, AppName, AppVersion, Version);
-                            throw new NotImplementedException($"{options.Server} Server is not available. You might have used the wrong server");
+                            break;
                         }
 
                     case "EA_Server":

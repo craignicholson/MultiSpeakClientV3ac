@@ -103,8 +103,13 @@ namespace MultiSpeakClientV30ac
             HelpText = "EventType is used to ODEventNotification {Instantaneous, Outage, Restoration, NoResponse, Inferred, PowerOn, PowerOff}")]
         public string EventType { get; set; }
 
-        // Omitting long name, default --verbose
-
+        /// <summary>
+        /// Gets or sets the TransactionId
+        /// </summary>
+        [Option('t', "TransactionId", Required = false,
+            HelpText = "TransactionId is used in notifications like CDStateChangedNotification and ReadingChangedNotification to notify sender of the completed request.  It is a correlation id.")]
+        public string TransactionId { get; set; }
+ 
         /// <summary>
         /// Gets or sets a value indicating whether verbose.
         /// </summary>
