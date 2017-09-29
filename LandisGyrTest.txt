@@ -153,7 +153,43 @@ MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m   InitiateConnectDisconnect -d F07DF930 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/CB_Server.asmx
 
 
-Error message from Broker is wrong for meter 100.
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/CB_Server.asmx -u LG -p test09072017 -c LG -s CB_Server -m CDStateChangeNotification -d F07DF930 -t 0525376f-291f-423b-93ec-1f92b4535468
+
+The AMI got this ID -         "ClientTransactionID" : "82d8554c-5979-45ed-875c-d197774b375b", and not         "OriClientTransactionID" : "0525376f-291f-423b-93ec-1f92b4535468",
+So annoying.
+
+{
+        "_id" : ObjectId("59cd62c7785a8d21ec8a0ff6"),
+        "Status" : "WAIT",
+        "RequestUrl" : "http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx",
+        "RequestMethod" : "InitiateConnectDisconnect",
+        "RequestMultiSpeakVersion" : "3",
+        "ClientRequest" : "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Header><MultiSpeakMsgHeader Version=\"3.0AC\" UserID=\"FakeCISMSpeak3\" Pwd=\"FakeCISMSpeak3\" AppName=\"MultiSpeakClient30ac\" AppVersion=\"1.0beta\" Company=\"FakeCISMSpeak3\" MessageID=\"00000000-0000-0000-0000-000000000000\" xmlns=\"http://www.multispeak.org/Version_3.0\" /></soap:Header><soap:Body><InitiateConnectDisconnect xmlns=\"http://www.multispeak.org/Version_3.0\"><cdEvents><connectDisconnectEvent><meterNo>F07DF930</meterNo></connectDisconnectEvent></cdEvents><responseURL>http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/CB_Server.asmx</responseURL><transactionID>0525376f-291f-423b-93ec-1f92b4535468</transactionID><expirationTime>43006.707</expirationTime></InitiateConnectDisconnect></soap:Body></soap:Envelope>",
+        "ClientName" : "FakeCISMSpeak3",
+        "ClientRequestDate" : ISODate("2017-09-28T20:59:51.772Z"),
+        "MeterIdentifier" : [
+                "F07DF930"
+        ],
+        "Errors" : [ ],
+        "ClientTransactionID" : "82d8554c-5979-45ed-875c-d197774b375b",
+        "ResponseUrl" : "http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/CB_Server.asmx",
+        "ServerRequestDate" : "9/28/2017 3:59:56 PM",
+        "ServerUrl" : " http://demo.turtletech.com/latest/webAPI/CD_CB.asmx",
+        "ServerName" : "Landis",
+        "MeterIdSendToSource" : [
+                "F07DF930"
+        ],
+        "OriClientTransactionID" : "0525376f-291f-423b-93ec-1f92b4535468",
+        "SettingTruncateReading" : false,
+        "ServerResponseExpiration" : null,
+        "ResponseMethod" : null,
+        "ServerResponse" : null,
+        "ResponseMultiSpeakVersion" : null
+}
+
+
+
+-Error message from Broker is wrong for meter 100.
 It should be
 errorObject[] >
         objectID :
