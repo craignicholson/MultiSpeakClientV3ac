@@ -4,46 +4,244 @@ This document will provide the user with a walk through in setting up the
 MultiSpeak Broker.  The goal is to provide a production like example anyone
 can follow and setup the broker.
 
-## Automated Meter Infrastructure Systems
+## Goals
 
-AMI systems will never make any requests to the Broker.  An AMI system
-will only publish notifications to the Broker which require maybe an AMI
-Authorized user to be setup.
+Review the terminology of the application, how the application works and
+how to setup Senders and Reviecers.
 
-AMI systems are usually the reciever of all the requests.
+- Sender is the the CIS, AMI, or OMS or any other vendor who wants to send CIM or multispeak messages to the Broker.
+- Broker is the main application which hosts the MultiSpeak, CIM endpoints
+- Receivers can be AMI (Aclara, Sensus, Trilliant, etc..)
 
-## Customer Information Systems
+### Applications
 
-CIS System (or our own CSR Portal) will be the main users of sending requests to the broker.
+- MultiSpeakBroker Web Application
+- MultiSpeakBroker Windows Service
 
-### ExampleVendor
+#### Types of Requests
 
-Our vendor, who goes by the fancy yet uncreative name of 'FakeCISMSpeak3', and has 50%
-of the co-operative market will need to send the following commands to the AMI system.
-But ... wait.  There are two AMI systems so we need to have FakeCISMSpeak3 send these
-requests to the MutliSpeakBroker which forwards the request to the AMI System.
+- Synchronous
 
-List of commands the FakeCISMSpeak3 vendor will send to the AMI system
+MutliSpeak supports synchronous requests where the Sender sends a request to the Broker
+and waits for the response, holding the connection.
 
-- ServiceLocationChangedNotification
-- CancelDisconnectedStatus
-- CancelUsageMonitoring
-- MeterAddNotification
-- MeterChangedNotification
-- MeterRemoveNotification
+- Asynchronous
+
+MultiSpeak also supports asynchronous requests where the Sender sends a request to the Broker
+and then moves on to do more work.  Each asynchronous task will have a transactionId and each
+asynchronous response is called a Notification.
+
+#### Version 3
+
+| Sender Request Method  |  Receiver Response Method | Supported Receivers  |
+|------------------------|---------------------------|----------------------|
+| InitiateCDStateRequest  | CDStateChangedNotification  | CIM - MSpeak3 - MSpeak4  |
+| InitiateConnectDisconnect  | CDStatesChangeNotification  | CIM - MSpeak3 - MSpeak4 - Utiliwise  |
+| InitiateDemandReset  | MeterEventNotification  | CIM - MSpeak3 - MSpeak4 - Utiliwise  |
+| InitiateMeterReadByMeterNumber  | ReadingChangedNotification  | CIM - MSpeak3 - MSpeak4 |
+| InitiateOutageDetectionEventRequest  | ODEventNotification  | CIM - MSpeak3 - MSpeak4  |
+| InitiateUsageMonitoring  | UsageMonitoringNotification  | MSpeak3 - MSpeak4  |
+| CancelDisconnectedStatus  |   | MSpeak3 - MSpeak4  |
+| CancelUsageMonitoring  |   | MSpeak3 - MSpeak4  |
+| GetAMRSupportedMeters  |   | MSpeak3 - MSpeak4.13 - MSpeak4  |
+| GetCDMeterState  |   | MSpeak3 - MSpeak4  |
+| GetCDSupportedMeters  |   | MSpeak3 - MSpeak4  |
+| GetLatestReadingByMeterNo  |   | MSpeak3 - MSpeak4  |
+| GetReadingsByDate  |   | MSpeak3 - MSpeak4  |
+| InitiateDisconnectedStatus  |   | MSpeak3 - MSpeak4  |
+| MeterAddNotification  |   | MSpeak3 - MSpeak4  |
+| MeterChangedNotification  |   | MSpeak3 - MSpeak4  |
+| MeterRemoveNotification  |   | MSpeak3 - MSpeak4  |
+| MeterRetireNotification  |   | MSpeak3 - MSpeak4  |
+| ServiceLocationChangedNotification  |   | MSpeak3 - MSpeak4  |
+| IsAMRMeter  |   | MSpeak3 - MSpeak4  |
+| GetMethods - Lists implemented methods in broker and is not sent to the AMI system |   | MSpeak3 - MSpeak4  |
+
+The Synchronous methods which do not have a meter or service location are handled differently than the methods
+which require a meter or service location.
+
+Since the Broker can route requests to more than one AMI system, the Broker will ask the MDM which AMI system (MDM.dbo.ReadSource)
+the meter belongs to so we can route the method to the correct AMI system.
+
+##### Notification (Origin of Notification)
+
+- CancelDisconnectedStatus (CIS)
+- CancelUsageMonitoring (CIS)
+- MeterAddNotification (CIS)
+- MeterChangedNotification (CIS)
+- MeterEventNotification (AMI)
+- MeterRemoveNotification (CIS)
+- ODEventNotification (AMI)
+- ReadingChangedNotification  (AMI)
+- ServiceLocationChangedNotification (CIS)
+- UsageMonitoringNotification (AMI)
+
+##### Meter Commands
+
+- GetCDMeterState
+- GetLatestReadingByMeterNo
 - InitiateUsageMonitoring
+- IntiaiteCDStateRequest
 - InitiateDisconnectedStatus
+- InitiateConnectDisconnect
+- IsAMRMeter
+
+##### Methods which do not require meter or service location
 
 - GetAMRSupportedMeters
-- GetLatestReadingByMeterNo
 - GetCDSupportedMeters
-- GetCDMeterState
-- InitiateConnectDisconnect
 
-Step 1:
-Add FakeCISMSpeak3 to Authorized Users.  That's it move on.
+*Typically these methods are requested by the CIS*
 
-~Screen Shots to Add~
+Note, these methods will always be setup on the CIS Vendor and 
+not on the AMI Vendor.  This is confusing and we will have a full
+example listed below.
+
+## Use Case One
+
+We will have one CIS Vendor, and two AMI Vendors, and one OMS vendor.
+
+- FakeCISMSpeak3  aka FCorp
+- FakeAMIMSpeak3  aka Asweara
+- FakeAMIMSpeak4  aka Sensei
+- FakeOMSMSpeak3  aka HardMil
+
+The FakeCISMSpeak3 will send requests to the broker and expect requests involing
+meters to be routed to the correct AMI system, and if required transform the
+MultiSpeak Version 3 to MultiSpeak Version 4.
+
+*Hey, if you cringe at those names... we can call them anyting you want.*
+
+### Setup Authorized Users
+
+The main point of setting up auhtorized users is to give each vendor a user
+and password to the Broker.  This will allow them to send requests and responses
+back to the broker.
+
+After or even before we setup any authorized users, you will need to ask or discover
+what the Company value is in the MutliSpeak Header.
+
+We use the UserID, Pwd, and Company values when authenticating the incoming requests from Senders.
+
+```xml
+
+<MultiSpeakMsgHeader
+        Version="3.0"
+        UserID=""
+        Pwd=""
+        AppName="CRCLink"
+        Company="CRC"
+        xmlns="http://www.multispeak.org/Version_3.0"/>
+
+```
+
+#### Step 1
+
+- Click or navigate to [Authorized Users](http://63.164.96.175/MultiSpeakBroker/UserConfig.aspx)
+- Click Add
+
+Enter the following
+
+|       Key     |                                Value                                   |
+|---------------|------------------------------------------------------------------------|
+| Company       | This value should match the value in the multispeak header for Company |
+| User Name     | You will create a user name for the vendor                             |
+| User Password | You will create a password for the vendor                              |
+
+> Add FakeCISMSpeak3 to Authorized Users.  That's it move on.
+
+|       Key     |    Value   |
+|---------------|------------|
+| Company       | FCorp      |
+| User Name     | FCorpUser  |
+| User Password | 1337Fcorp  |
+
+*Screen Shots to Add*
+
+All this does is allow a vendor to authenticate.  If we stop here and our FCorp sends us
+a GetCDSupportedMeters and we have only setup the Authorized User the request will be denied.
+
+```C#
+errorObject[] >
+        objectID :
+        errorString : Fail to get subscriber for Meter 100. Reason: #100 might not be in the FakeCISMSpeak3 system or might not have Readsource assigned.
+        nounType :
+        eventTime : 9/27/2017 2:42:23 PM
+        eventTimeSpecified : True
+```
+
+Need to re-test and validate this error message.
+
+#### Step 1.1
+
+Now since we setup FCorp as an Authorized Users and we know this vendor will send meter and service location requests, notifications,
+and requests which do not involve meters and locations we have to setup additional steps.
+
+##### Vendor Config for FakeCISMSpeak3 (FCorp)
+
+- Click [Vendor Configuration](http://63.164.96.175/MultiSpeakBroker/VendorConfig.aspx)
+- Click Add Vendor
+
+> In general, there are 2 type of vendors - Client and ReadSource. Client is a vendor that makes requests to Broker. Those vendors can be CIS, OMS or other. ReadSource is MDM ReadSource. It is a collection of one or more systems that process meter commands or return information.
+
+Re-write of the above statement
+
+> We can have two types of Vendors. A Client vendor makes request to the broker. Typically CIS and OMS are clients. A ReadSource vendor is a Vendor which needs to have the Vendor Name match the MDM.dbo.ReadSourceDescription.  A ReadSource vendor is typically the AMI System. This allows us to route incoming requests from Senders (Clients) to the correct Reciever (Servers), which in this case is an AMI system.
+
+Enter the following
+
+|       Key     |                                Value                                   |
+|---------------|------------------------------------------------------------------------|
+| Vendor        | FakeCISMSpeak3 aka FCorp                                               |
+| Info          | FakeCISMSpeak3, this is the client which will make requests...         |
+
+> Issue, when adding new Vendor with 'Add Vendor' the Key is **Vendor**.  When editting the Key is **Name**.
+
+#### Step 1.2
+
+Add Subscribers by clicking [Set Subsribers](http://63.164.96.175/MultiSpeakBroker/SubscribersConfig.aspx?ReadSource=FakeCISMSpeak3)
+
+The Subscribers we will setup up for FakeCISMSpeak3 will be the following:
+
+- MSpeak3 GetAMRSupportedMeters
+- MSpeak3 GetCDSupportedMeters
+
+Both of these methods pass no parameters to the AMI System.  So we need to set these subribers up under the FakeCISMSPeak3 (FCorp) Vendor.
+Since FakeCISMSPeak3 (FCorp) uses MultiSpeak version 3 we need to use the MSpeak3 methods.
+
+Click EDIT for the MSpeak3 GetAMRSupportedMeters Subscriber.
+
+Edit Subscriber - GetAMRSupportedMeters (MSpeak3)
+Response Method(MSpeak3):
+
+|       Key     |                                Value                                   |
+|---------------|-----------------------------------------------------------------------------------|
+| Host          | Host is really the Receiver's MultiSpeak Version.  Our AMI Provider is on MSPeak3 |
+| Host Url      | Reciever's Url.  This will be the AMI Systems URL                                 |
+| USer ID       | User ID the AMI System has given us                                               |
+| User Password | User Password the AMI System has given us                                         |
+| AMI Meter Type| The device id we need to send to the AMI System                                   |
+
+The AMI Meter Type is the value or deviceId we will send to the AMI System. Ocassionaly the MeterIdentifer
+is not the value the AMI System requires.  You will need to check with the AMI Vendor before setting this
+up to determin what deviceId will be used {MeterIdentifier, AMISerialNo, AMIControlIdentifier}.
+
+|       Key     |                                                       |
+|---------------|-------------------------------------------------------|
+| Host          | MSpeak3                                               |
+| Host Url      | http://demo.turtletech.com/latest/webAPI/MR_CB.asmx   |
+| USer ID       | UNITILTST                                             |
+| User Password | Unitil1!                                              |
+| AMI Meter Type| Meter Identifier                                      |
+
+Another key important fact, is you need to map the method to the AMI vendors correct server. GetAMRSupportedMeters is in the MR_CB server for this AMI vendor.
+
+Ok, we are getting close.  Breath deep, take a walk, smoke, coke, granola break or something.  Or just push forward. Or maybe test?
+
+#### Step 2
+
+
+If this vendor is making requests to Broker, please configure Client Web API where Broker can retreive meter information.
 
 Step 2:
 Setup the AMI Vendor, and we can call the vendor... something special like FakeAMI
