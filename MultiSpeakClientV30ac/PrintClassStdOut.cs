@@ -20,6 +20,8 @@ namespace MultiSpeakClientV30ac
     {
         /// <summary>
         /// Print error objects. This can also be used to print out any object[] (object array).
+        /// covariant array conversion from errorObject[] to object[] can cause runtime error on write operation.
+        /// so instead of passing response we pass response.ToArray<object>()
         /// </summary>
         /// <param name="objects">
         /// The error objects.
