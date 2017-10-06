@@ -11,6 +11,7 @@ namespace MultiSpeakClientV30ac
 {
     using System;
     using System.Net;
+    using System.Runtime;
 
     using MultiSpeakClientV30ac.proxyCB3ac;
 
@@ -19,6 +20,17 @@ namespace MultiSpeakClientV30ac
     /// </summary>
     public static class CbServerRequests
     {
+        /// <summary>
+        /// We Failed
+        /// This is a test to see how all this works passing the message back to the caller.
+        /// </summary>
+        private const string Fail = "FAIL";
+
+        /// <summary>
+        /// We passed
+        /// </summary>
+        private const string Successfull = "SUCCESS";
+
         /// <summary>
         /// The log file directory.
         /// </summary>
@@ -61,63 +73,104 @@ namespace MultiSpeakClientV30ac
         /// <param name="version">
         /// The version.
         /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string RunCommand(Options options, string appName, string appVersion, string version)
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        public static void RunCommand(Options options, string appName, string appVersion, string version, out string message)
         {
-            var client = new CB_Server() { Url = options.EndPoint, };
-            var header = new MultiSpeakMsgHeader()
+            // Wrap this in try catch instead of each individual method/
+            // Note this could get confusing...  Just trying it for now to keep the code simple.
+            try
             {
-                UserID = options.UserId,
-                Pwd = options.Pwd,
-                AppName = appName,
-                AppVersion = appVersion,
-                Company = options.Company,
-                Version = version,
-                MessageID = new Guid().ToString()
-            };
-            client.MultiSpeakMsgHeaderValue = header;
+                message = string.Empty;
+                var client = new CB_Server() { Url = options.EndPoint, };
+                var header = new MultiSpeakMsgHeader()
+                                 {
+                                     UserID = options.UserId,
+                                     Pwd = options.Pwd,
+                                     AppName = appName,
+                                     AppVersion = appVersion,
+                                     Company = options.Company,
+                                     Version = version,
+                                     MessageID = new Guid().ToString()
+                                 };
+                client.MultiSpeakMsgHeaderValue = header;
 
-            ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
+                ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
 
-            switch (options.Method)
+                switch (options.Method)
+                {
+                    case "CDStateChangeNotification":
+                        message = CdStateChangedNotification(client, options);
+                        break;
+                    case "GetCustomerByMeterNo":
+                        message = GetCustomerByMeterNo(client, options);
+                        break;
+                    default:
+                        Console.WriteLine("Check the list of methods in the README.md for each Server.");
+                        Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
+                        break;
+                }
+
+                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
+            }
+            catch (Exception ex)
             {
-                case "CDStateChangeNotification":
-                    CdStateChangedNotification(client, options);
-                    break;
-                default:
-                    Console.WriteLine("Check the list of methods in the README.md for each Server.");
-                    Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
-                    break;
+                Console.WriteLine(ex.Message);
+                message = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                    message = ex.InnerException.Message;
+                }
+            }
+        }
+
+        private static string GetCustomerByMeterNo(CB_Server client, Options options)
+        {
+            if (options == null)
+            {
+                return Fail;
             }
 
-            return "Success";
+            if (options.Device == null)
+            {
+                Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                return Fail;
+            }
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Connect Disconnect Changed Notification
         /// Typically sent after a connect or disconnect command to turn on or off a meter.
         /// </summary>
-        /// <param name="client">the client</param>
-        /// <param name="options">the options, options.Device is required</param>
-        private static void CdStateChangedNotification(CB_Server client, Options options)
+        /// <param name="client">
+        /// the client
+        /// </param>
+        /// <param name="options">
+        /// the options, options.Device is required
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string CdStateChangedNotification(CB_Server client, Options options)
         {
             if (options == null)
             {
-                return;
+                return Fail;
             }
 
             if (options.Device == null)
             {
                 Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                return;
+                return Fail;
             }
 
             if (options.TransactionId == null)
             {
                 Console.WriteLine("TransactionId is missing. Please add a TransactionId: -t 0525376f-291f-423b-93ec-1f92b4535468");
-                return;
+                return Fail;
             }
 
             var meterNo = options.Device;
@@ -128,6 +181,8 @@ namespace MultiSpeakClientV30ac
             var transactionId = options.TransactionId;
             var errorString = string.Empty;
             client.CDStateChangedNotification(meterNo, StateChange, transactionId, errorString);
+
+            return Successfull;
         }
     }
 }

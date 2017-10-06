@@ -1,3 +1,69 @@
+AssessmentLocationChangedNotification
+AssignCrewsToOutage
+AVLChangedNotification
+CHEventNotification
+CloseCalls
+ConnectDisconnectChangedNotification
+CustomerChangedNotification
+DiscardOutage
+GetActiveOutages - done
+GetAllActiveCalls
+GetAllActiveOutageEvents - done
+GetAllCircuitElements - done, but does not work
+GetAllConnectivity
+GetAllCrews
+GetAllLoadFlowResults
+GetAllShortCircuitAnalysisResults
+GetChildCircuitElements
+GetChildConnectivity
+GetCircuitElementsNearLatLong
+GetCustomerOutageHistory - done
+GetCustomersAffectedByOutage - done
+GetDeviceTreeConnectivity
+GetDomainMembers
+GetDomainNames
+GetDownlineCircuitElements
+GetDownlineConnectivity
+GetDownlineMeterConnectivity
+GetLoadFlowResultByObjectID
+GetMeterConnectivityBySubstation - done
+GetModifiedConnectivity
+GetOutageDurationEvents  - done
+GetOutageEvent
+GetOutageEventStatus - done
+GetOutageEventStatusByOutageLocation
+GetOutageHistoryOnServiceLocation - done
+GetOutageReasonCodes
+GetOutageStatusByLocation - done
+GetParentCircuitElements
+GetParentConnectivity
+GetShortCircuitAnalysisResultByObjectID
+GetSiblingMeterConnectivity
+GetSubstationNames - done
+GetUplineCircuitElements
+GetUplineConnectivity
+GetUplineMeterConnectivity
+MeterAddNotification
+MeterChangedNotification
+MeterExchangeNotification
+MeterRemoveNotification
+MeterRetireNotification
+ODEventNotification
+OutageReasonChangedNotification
+ResolvedCaller
+RestoreOutage
+SCADAAnalogChangedNotification
+SCADAAnalogChangedNotificationByPointID
+SCADAAnalogChangedNotificationForPower
+SCADAAnalogChangedNotificationForVoltage
+SCADAStatusChangedNotification
+SCADAStatusChangedNotificationByPointID
+ServiceLocationChangedNotification
+UnassignCrewsFromOutage
+UnassignOutagesFromCrew
+UpdateMessageStatus
+
+
 cd C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug
  
 MultiSpeakClientV30ac.exe -e http://localhost:55273/MDM_Server.asmx -u ElectSolve -p Password123 -c ElectSolve -s OA_Server -m  ODEventNotification -d meterNo
