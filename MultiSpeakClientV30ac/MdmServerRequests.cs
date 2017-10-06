@@ -81,62 +81,82 @@ namespace MultiSpeakClientV30ac
         /// </param>
         public static void RunCommand(Options options, string appName, string appVersion, string version, out string message)
         {
-            message = string.Empty;
-            var client = new MDM_Server() { Url = options.EndPoint, };
-            var header = new MultiSpeakMsgHeader()
+            try
             {
-                UserID = options.UserId,
-                Pwd = options.Pwd,
-                AppName = appName,
-                AppVersion = appVersion,
-                Company = options.Company,
-                Version = version,
-                MessageID = new Guid().ToString()
-            };
-            client.MultiSpeakMsgHeaderValue = header;
+                message = string.Empty;
+                var client = new MDM_Server() { Url = options.EndPoint, };
+                var header = new MultiSpeakMsgHeader()
+                {
+                    UserID = options.UserId,
+                    Pwd = options.Pwd,
+                    AppName = appName,
+                    AppVersion = appVersion,
+                    Company = options.Company,
+                    Version = version,
+                    MessageID = new Guid().ToString(),
+                    TimeStamp = DateTime.Now,
+                    TimeStampSpecified = true
+                };
+                client.MultiSpeakMsgHeaderValue = header;
 
-            ServicePointManager.ServerCertificateValidationCallback =
-                (obj, certificate, chain, errors) => true;
+                ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
 
-            // Goals keep the Methods in alpha order.
-            switch (options.Method)
-            {
-                case "GetCDMeterState":
-                    message = GetCdMeterState(client, options);
-                    break;
-                case "GetCDSupportedMeters":
-                    message = GetCdSupportedMeters(client);
-                    break;
-                case "InitiateConnectDisconnect":
-                    message = InitiateConnectDisconnect(client, options);
-                    break;
-                case "InitiateCDStateRequest":
-                    message = InitiateCdStateRequest(client, options);
-                    break;
-                case "InitiateOutageDetectionEventRequest":
-                    message = InitiateOutageDetectionEventRequest(client, options);
-                    break;
-                case "PingUrl":
-                    message = PingUrl(client);
-                    break;
-                case "ReadingChangedNotification":
-                    message = ReadingChangedNotification(client, options);
-                    break;
-                default:
-                    Console.WriteLine(
-                        $"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
-                    Console.WriteLine("Check the list of methods in the README.md for each Server.");
-                    break;
+                // Goals keep the Methods in alpha order.
+                switch (options.Method)
+                {
+                    case "GetCDMeterState":
+                        message = GetCdMeterState(client, options);
+                        break;
+                    case "GetCDSupportedMeters":
+                        message = GetCdSupportedMeters(client);
+                        break;
+                    case "InitiateConnectDisconnect":
+                        message = InitiateConnectDisconnect(client, options);
+                        break;
+                    case "InitiateCDStateRequest":
+                        message = InitiateCdStateRequest(client, options);
+                        break;
+                    case "InitiateOutageDetectionEventRequest":
+                        message = InitiateOutageDetectionEventRequest(client, options);
+                        break;
+                    case "PingUrl":
+                        message = PingUrl(client);
+                        break;
+                    case "ReadingChangedNotification":
+                        message = ReadingChangedNotification(client, options);
+                        break;
+                    default:
+                        Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
+                        Console.WriteLine("Check the list of methods in the README.md for each Server.");
+                        break;
+                }
+
+                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
-
-            // TODO: I wonder if I can just output the Print for MultiSpeakHeader here for the client response.
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                message = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                    message = ex.InnerException.Message;
+                }
+            }
         }
 
         /// <summary>
         /// Get the Connect or Disconnect State from the AMI database, this is not the current state of the meter in the 'real' world
         /// </summary>
-        /// <param name="client">the client</param>
-        /// <param name="options">Expects options.Device</param>
+        /// <param name="client">
+        /// the client
+        /// </param>
+        /// <param name="options">
+        /// Expects options.Device
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetCdMeterState(MDM_Server client, Options options)
         {
             if (options == null)
@@ -167,15 +187,18 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"GetCDMeterState.{options.Device}", "3AC", logFileDirectory);
-            PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
-            PrintClassStdOut.PrintObject(response);
             return Successfull;
         }
 
         /// <summary>
         /// Get CD Supported Meters
         /// </summary>
-        /// <param name="client">client we need</param>
+        /// <param name="client">
+        /// client we need
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetCdSupportedMeters(MDM_Server client)
         {
             // objectsRemaining and LastSent variables and re-send if required.
@@ -207,10 +230,8 @@ namespace MultiSpeakClientV30ac
                 }
 
                 XmlUtil.WriteToFile(xml, $"GetCDSupportedMeters.{objectsRemaining}", "3AC", logFileDirectory);
-                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
 
-            // TODO:
             return Successfull;
         }
 
@@ -223,65 +244,65 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string InitiateCdStateRequest(MDM_Server client, Options options)
         {
+            if (options == null)
+            {
+                return Fail;
+            }
+
+            if (options.Device == null)
+            {
+                Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                return Fail;
+            }
+
+            if (options.ResponseUrl == null)
+            {
+                Console.WriteLine("ResponseUrl is missing. Please add a ResponseUrl - example: -r http://yourserver/NOT_Server.asmx");
+                return Fail;
+            }
+
             var cdstates = new[]
+                               {
+                                   new CDState
+                                       {
+                                           meterNo = options.Device,
+                                           meterID = options.Device,
+                                           comments = "Craig's Test for EPHRPA-71437667",
+                                           serviceType = serviceType.Electric,
+                                           serviceTypeSpecified = true
+                                       }
+                               };
+            var requestDate = DateTime.Now;
+            var responseUrl = options.ResponseUrl;
+            var transactionId = Guid.NewGuid().ToString();
+            var expirationTime = (float)requestDate.AddMinutes(30).ToOADate();
+
+            // TimeStamp is unix timestamp, so we use ToOADate to get a double and cast to float. 
+            var response = client.InitiateCDStateRequest(cdstates, responseUrl, transactionId, expirationTime);
+            if (response == null)
             {
-                new CDState
-                {
-                    meterNo = "EPHRPA-71437667",
-                    meterID = "EPHRPA-71437667",
-                    comments = "Craig's Test for EPHRPA-71437667",
-                    serviceType = serviceType.Electric,
-                    serviceTypeSpecified = true
-                }
-            };
-
-            try
-            {
-                if (options == null)
-                {
-                    return Fail;
-                }
-
-                if (options.Device == null)
-                {
-                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return Fail;
-                }
-
-                if (options.ResponseUrl == null)
-                {
-                    Console.WriteLine(
-                        "ResponseUrl is missing. Please add a ResponseUrl : -r http://yourserver/NOT_Server.asmx");
-                    return Fail;
-                }
-
-                var requestDate = DateTime.Now;
-                var responseUrl = options.ResponseUrl;
-                var transactionId = Guid.NewGuid().ToString();
-                var expirationTime =
-                    (float)requestDate.AddMinutes(30)
-                        .ToOADate(); // TimeStamp is unix timestamp, so we use ToOADate to get a double and cast to float. 
-                var response =
-                    client.InitiateCDStateRequest(cdstates, responseUrl, transactionId, expirationTime);
-                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
-
-                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
-                // so instead of passing response we paass repsonse.ToArray<object>()
-                if (response == null)
-                {
-                    return Successfull;
-                }
-
-                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
-                return Fail;
+                return Successfull;
             }
-            catch (Exception ex)
+
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
             {
-                Console.WriteLine(ex.Message);
-                return Fail;
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
             }
+
+            XmlUtil.WriteToFile(xml, $"InitiateCDStateRequest.{options.Device}.ERROR", "3AC", logFileDirectory);
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            return xml;
         }
 
         /// <summary>
@@ -314,23 +335,16 @@ namespace MultiSpeakClientV30ac
                                    new connectDisconnectEvent
                                        {
                                          meterNo  = options.Device
-                                       }  
+                                       }
                                };
             var transactionId = Guid.NewGuid().ToString();
             var expirationTime = (float)DateTime.Now.AddHours(1).ToOADate();
             var response = client.InitiateConnectDisconnect(connectDisconnectEvents, options.ResponseUrl, transactionId, expirationTime);
-
-            PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
-
-            // We might not get a response, if so exit
             if (response == null)
             {
                 return Successfull;
             }
 
-            // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
-            // so instead of passing response we paass repsonse.ToArray<object>()
-            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
             var serializer = new XmlSerializer(typeof(errorObject[]));
             string xml;
             using (var sww = new StringWriter())
@@ -342,69 +356,76 @@ namespace MultiSpeakClientV30ac
                 }
             }
 
-            XmlUtil.WriteToFile(xml, $"InitiateConnectDisconnect.{options.Device}", "3AC", logFileDirectory);
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            XmlUtil.WriteToFile(xml, $"InitiateConnectDisconnect.{options.Device}.ERROR", "3AC", logFileDirectory);
             return xml;
         }
-
 
         /// <summary>
         /// Send Initiate Outage Detection Event Request
         /// </summary>
-        /// <param name="client">Expects MDM_Server, or MR_Server clients.</param>
-        /// <param name="options">Requires Device and ResponseUrl</param>
+        /// <param name="client">
+        /// Expects MDM_Server, or MR_Server clients.
+        /// </param>
+        /// <param name="options">
+        /// Requires Device and ResponseUrl
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string InitiateOutageDetectionEventRequest(MDM_Server client, Options options = null)
         {
-            try
+            if (options == null)
             {
-                if (options == null)
-                {
-                    return Fail;
-                }
-
-                if (options.Device == null)
-                {
-                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return Fail;
-                }
-
-                if (options.ResponseUrl == null)
-                {
-                    Console.WriteLine("ResponseUrl is missing. Please add a ResponseUrl : -r http://yourserver/NOT_Server.asmx");
-                    return Fail;
-                }
-
-                var meters = new[] { options.Device };
-                var requestDate = DateTime.Now;
-
-                var responseUrl = options.ResponseUrl;
-                var transactionId = Guid.NewGuid().ToString();
-                var expirationTime =
-                    (float)requestDate.AddMinutes(30)
-                        .ToOADate(); // TimeStamp is unix timestamp, so we use ToOADate to get a double and cast to float. 
-                var response = client.InitiateOutageDetectionEventRequest(
-                    meters,
-                    requestDate,
-                    responseUrl,
-                    transactionId,
-                    expirationTime);
-
-                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
-
-                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
-                // so instead of passing response we paass repsonse.ToArray<object>()
-                if (response == null)
-                {
-                    return Successfull;
-                }
-
-                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
                 return Fail;
             }
-            catch (Exception ex)
+
+            if (options.Device == null)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
                 return Fail;
             }
+
+            if (options.ResponseUrl == null)
+            {
+                Console.WriteLine("ResponseUrl is missing. Please add a ResponseUrl : -r http://yourserver/NOT_Server.asmx");
+                return Fail;
+            }
+
+            var meters = new[] { options.Device };
+            var requestDate = DateTime.Now;
+
+            var responseUrl = options.ResponseUrl;
+            var transactionId = Guid.NewGuid().ToString();
+            var expirationTime =
+                (float)requestDate.AddMinutes(30)
+                    .ToOADate(); // TimeStamp is unix timestamp, so we use ToOADate to get a double and cast to float. 
+            var response = client.InitiateOutageDetectionEventRequest(
+                meters,
+                requestDate,
+                responseUrl,
+                transactionId,
+                expirationTime);
+
+            if (response == null)
+            {
+                return Successfull;
+            }
+
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            XmlUtil.WriteToFile(xml, $"InitiateOutageDetectionEventRequest.{options.Device}.ERROR", "3AC", logFileDirectory);
+            return xml;
         }
 
         /// <summary>
@@ -413,50 +434,60 @@ namespace MultiSpeakClientV30ac
         /// <param name="client">
         /// The client.
         /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string PingUrl(MDM_Server client)
         {
             var response = client.PingURL();
-
-            // This MessageID will be the MessageID from the server and not Message from the Client
-            // since the response will contain the out soap header.
-            // This shows how one can use the Header to pass information from the client to the server
-            // and from the server to the client.  The Chunking Examples for GetAllConnectivity is
-            // the best use case I have for how the headers are used.
-            PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
-
-            // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
-            // so instead of passing response we paass repsonse.ToArray<object>()
             if (response == null)
             {
                 return Successfull;
             }
 
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
             PrintClassStdOut.ErrorObjects(response.ToArray<object>());
-            return response[0].errorString;
+            XmlUtil.WriteToFile(xml, $"PingURL.ERROR", "3AC", logFileDirectory);
+            return xml;
         }
 
         /// <summary>
         /// Send Reading Changed Notification
         /// </summary>
-        /// <param name="client">the client</param>
-        /// <param name="options">out options</param>
+        /// <param name="client">
+        /// the client
+        /// </param>
+        /// <param name="options">
+        /// out options
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string ReadingChangedNotification(MDM_Server client, Options options)
         {
-            try
+            if (options == null)
             {
-                if (options == null)
-                {
-                    return Fail;
-                }
+                return Fail;
+            }
 
-                if (options.Device == null)
-                {
-                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return Fail;
-                }
+            if (options.Device == null)
+            {
+                Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                return Fail;
+            }
 
-                var meterReads = new[]
-                                     {
+            var meterReads = new[]
+                                 {
                                          new meterRead
                                              {
                                                  meterNo = options.Device,
@@ -471,25 +502,27 @@ namespace MultiSpeakClientV30ac
                                                  kW = 10f,
                                              }
                                      };
-                var transactionId = Guid.NewGuid().ToString();
-                var response = client.ReadingChangedNotification(meterReads, transactionId);
-                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
-
-                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
-                // so instead of passing response we pass repsonse.ToArray<object>()
-                if (response == null)
-                {
-                    return Successfull;
-                }
-
-                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
-                return response[0].errorString;
-            }
-            catch (Exception ex)
+            var transactionId = Guid.NewGuid().ToString();
+            var response = client.ReadingChangedNotification(meterReads, transactionId);
+            if (response == null)
             {
-                Console.WriteLine(ex.Message);
-                return Fail;
+                return Successfull;
             }
+
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            XmlUtil.WriteToFile(xml, $"ReadingChangedNotification.ERROR", "3AC", logFileDirectory);
+            return xml;
         }
     }
 }
