@@ -24,6 +24,17 @@ namespace MultiSpeakClientV30ac
     public static class OaServerRequests
     {
         /// <summary>
+        /// We Failed
+        /// This is a test to see how all this works passing the message back to the caller.
+        /// </summary>
+        private const string Fail = "FAIL";
+
+        /// <summary>
+        /// We passed
+        /// </summary>
+        private const string Successfull = "SUCCESS";
+
+        /// <summary>
         /// The log file directory.
         /// </summary>
         private static string logFileDirectory;
@@ -65,67 +76,199 @@ namespace MultiSpeakClientV30ac
         /// <param name="version">
         /// The version.
         /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string RunCommand(Options options, string appName, string appVersion, string version)
+        /// <param name="message">
+        /// Error Message 
+        /// </param>
+        public static void RunCommand(
+            Options options,
+            string appName,
+            string appVersion,
+            string version,
+            out string message)
         {
-            var client = new OA_Server { Url = options.EndPoint };
-            var header = new MultiSpeakMsgHeader
+            // Wrap this in try catch instead of each individual method/
+            // Note this could get confusing...  Just trying it for now to keep the code simple.
+            try
             {
-                UserID = options.UserId,
-                Pwd = options.Pwd,
-                AppName = appName,
-                AppVersion = appVersion,
-                Company = options.Company,
-                Version = version
-            };
-            client.MultiSpeakMsgHeaderValue = header;
+                message = string.Empty;
 
-            // self-signed cert override
-            ServicePointManager.ServerCertificateValidationCallback =
-                delegate { return true; };
+                var client = new OA_Server { Url = options.EndPoint };
+                var header = new MultiSpeakMsgHeader
+                                 {
+                                     UserID = options.UserId,
+                                     Pwd = options.Pwd,
+                                     AppName = appName,
+                                     AppVersion = appVersion,
+                                     Company = options.Company,
+                                     Version = version,
+                                     MessageID = new Guid().ToString(),
+                                     TimeStamp = DateTime.Now,
+                                     TimeStampSpecified = true
+                                 };
+                client.MultiSpeakMsgHeaderValue = header;
 
-            switch (options.Method)
-            {
-                case "GetActiveOutages":
-                    GetActiveOutages(client);
-                    break;
-                case "GetAllActiveOutageEvents":
-                    GetAllActiveOutageEvents(client);
-                    break;
-                case "GetAllConnectivity":
-                    GetAllConnectivity(client);
-                    break;
-                case "GetAllCircuitElements":
-                    GetAllCircuitElements(client);
-                    break;
-                case "GetOutageDurationEvents":
-                    GetOutageDurationEvents(client, options);
-                    break;
-                case "GetOutageEventStatus":
-                    GetOutageEventStatus(client, options);
-                    break;
-                case "GetOutageStatusByLocation":
-                    GetOutageStatusByLocation(client, options);
-                    break;
-                case "GetCustomersAffectedByOutage":
-                    GetCustomersAffectedByOutage(client, options);
-                    break;
-                case "GetCustomerOutageHistory":
-                    GetCustomerOutageHistory(client, options);
-                    break;
-                case "ODEventNotification":
-                    SendOdEventNotification(client, options);
-                    break;
-                default:
-                    Console.WriteLine(
-                        $"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
-                    Console.WriteLine("Check the list of methods in the README.md for each Server.");
-                    break;
+                // self-signed cert override
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+                switch (options.Method)
+                {
+                    case "AssessmentLocationChangedNotification":
+                        break;
+                    case "AssignCrewsToOutage":
+                        break;
+                    case "AVLChangedNotification":
+                        break;
+                    case "CHEventNotification":
+                        break;
+                    case "CloseCalls":
+                        break;
+                    case "ConnectDisconnectChangedNotification":
+                        break;
+                    case "CustomerChangedNotification":
+                        break;
+                    case "DiscardOutage":
+                        break;
+                    case "GetActiveOutages":
+                        message = GetActiveOutages(client);
+                        break;
+                    case "GetActiveCalls":
+                        break;
+                    case "GetAllActiveOutageEvents":
+                        message = GetAllActiveOutageEvents(client);
+                        break;
+                    case "GetAllCircuitElements":
+                        message = GetAllCircuitElements(client);
+                        break;
+                    case "GetAllConnectivity":
+                        message = GetAllConnectivity(client);
+                        break;
+                    case "GetAllCrews":
+                        break;
+                    case "GetAllLoadFlowResults":
+                        break;
+                    case "GetAllShortCircuitAnalysisResults":
+                        break;
+                    case "GetChildCircuitElements":
+                        break;
+                    case "GetChildConnectivity":
+                        break;
+                    case "GetCircuitElementsNearLatLong":
+                        break;
+                    case "GetCustomerOutageHistory":
+                        message = GetCustomerOutageHistory(client, options);
+                        break;
+                    case "GetCustomersAffectedByOutage":
+                        message = GetCustomersAffectedByOutage(client, options);
+                        break;
+                    case "GetDeviceTreeConnectivity":
+                        break;
+                    case "GetDomainMembers":
+                        break;
+                    case "GetDomainNames":
+                        break;
+                    case "GetDownlineCircuitElements":
+                        break;
+                    case "GetDownlineConnectivity":
+                        break;
+                    case "GetDownlineMeterConnectivity":
+                        break;
+                    case "GetLoadFlowResultByObjectID":
+                        break;
+                    case "GetMeterConnectivityBySubstation":
+                        break;
+                    case "GetModifiedConnectivity":
+                        break;
+                    
+                    case "GetOutageDurationEvents":
+                        message = GetOutageDurationEvents(client, options);
+                        break;
+                    case "GetOutageEvent":
+                        break;
+                    case "GetOutageEventStatus":
+                        message = GetOutageEventStatus(client, options);
+                        break;
+                    
+                    case "GetOutageHistoryOnServiceLocation":
+                        break;
+                    case "GetOutageReasonCodes":
+                        break;
+                    case "GetOutageStatusByLocation":
+                        message = GetOutageStatusByLocation(client, options);
+                        break;
+                    case "GetParentCircuitElements":
+                        break;
+                    case "GetParentConnectivity":
+                        break;
+                    case "GetShortCircuitAnalysisResultByObjectID":
+                        break;
+                    case "GetSiblingMeterConnectivity":
+                        break;
+                    case "GetSubstationNames":
+                        break;
+                    case "GetUplineCircuitElements":
+                        break;
+                    case "GetUplineConnectivity":
+                        break;
+                    case "GetUplineMeterConnectivity":
+                        break;
+                    case "MeterAddNotification":
+                        break;
+                    case "MeterChangedNotification":
+                        break;
+                    case "MeterExchangeNotification":
+                        break;
+                    case "MeterRemoveNotification":
+                        break;
+                    case "MeterRetireNotification":
+                        break;
+                    case "ODEventNotification":
+                        message = SendOdEventNotification(client, options);
+                        break;
+                    case "OutageReasonChangedNotification":
+                        break;
+                    case "ResolvedCaller":
+                        break;
+                    case "RestoreOutage":
+                        break;
+                    case "SCADAAnalogChangedNotification":
+                        break;
+                    case "SCADAAnalogChangedNotificationByPointID":
+                        break;
+                    case "SCADAAnalogChangedNotificationForPower":
+                        break;
+                    case "SCADAAnalogChangedNotificationForVoltage":
+                        break;
+                    case "SCADAStatusChangedNotification":
+                        break;
+                    case "SCADAStatusChangedNotificationByPointID":
+                        break;
+                    case "ServiceLocationChangedNotification":
+                        break;
+                    case "UnassignCrewsFromOutage":
+                        break;
+                    case "UnassignOutagesFromCrew":
+                        break;
+                    case "UpdateMessageStatus":
+                        break;
+
+                    default:
+                        Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
+                        Console.WriteLine("Check the list of methods in the README.md for each Server.");
+                        break;
+                }
+
+                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
-
-            return "Success";
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                message = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                    message = ex.InnerException.Message;
+                }
+            }
         }
 
         /// <summary>
