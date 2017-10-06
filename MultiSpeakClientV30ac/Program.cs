@@ -172,7 +172,7 @@ namespace MultiSpeakClientV30ac
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message} - Occured");
+                Console.WriteLine($"MultiSpeakClientV30ac Error: {ex.Message}");
                 message = ex.Message;
                 if (ex.InnerException != null)
                 {
