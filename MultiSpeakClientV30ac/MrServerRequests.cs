@@ -95,7 +95,9 @@ namespace MultiSpeakClientV30ac
                     AppVersion = appVersion,
                     Company = options.Company,
                     Version = version,
-                    MessageID = new Guid().ToString()
+                    MessageID = new Guid().ToString(),
+                    TimeStamp = DateTime.Now,
+                    TimeStampSpecified = true
                 };
                 client.MultiSpeakMsgHeaderValue = header;
 
@@ -201,8 +203,6 @@ namespace MultiSpeakClientV30ac
 
             var meterNos = new[] { options.Device };
             var response = client.CancelDisconnectedStatus(meterNos);
-
-            // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             if (response == null)
             {
                 return Successfull;
@@ -241,8 +241,6 @@ namespace MultiSpeakClientV30ac
 
             var meterNos = new[] { options.Device };
             var response = client.CancelUsageMonitoring(meterNos);
-
-            // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             if (response == null)
             {
                 return Successfull;
@@ -274,6 +272,8 @@ namespace MultiSpeakClientV30ac
                 lastReceived = client.MultiSpeakMsgHeaderValue.LastSent;
                 int.TryParse(client.MultiSpeakMsgHeaderValue.ObjectsRemaining, out objectsRemaining);
                 Console.WriteLine($"GetAMRSupportedMeters objectsRemaining : {objectsRemaining}");
+
+                // TODO: Create IF EXISTS INSERT SCRITPS FOR METERS
                 foreach (var item in response)
                 {
                     Console.WriteLine(item.meterNo);
@@ -291,9 +291,7 @@ namespace MultiSpeakClientV30ac
                     }
                 }
 
-                XmlUtil.WriteToFile(xml, $"GetAMRSupportedMeters.{objectsRemaining}", "3AC", logFileDirectory);
-
-                // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);               
+                XmlUtil.WriteToFile(xml, $"GetAMRSupportedMeters.{objectsRemaining}", "3AC", logFileDirectory);            
             }
 
             return Successfull;
@@ -327,7 +325,6 @@ namespace MultiSpeakClientV30ac
             var response = client.GetHistoryLogByMeterNo(options.Device, DateTime.Now.Subtract(TimeSpan.FromDays(1000)), DateTime.Now);
             var serializer = new XmlSerializer(typeof(historyLog[]));
             string xml;
-
             using (var sww = new StringWriter())
             {
                 using (var writer = XmlWriter.Create(sww))
@@ -339,7 +336,6 @@ namespace MultiSpeakClientV30ac
 
             XmlUtil.WriteToFile(xml, $"GetHistoryLogByMeterNo.{options.Device}", "3AC", logFileDirectory);
 
-            // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             // response[0].errorString;
             return Successfull;
         }
@@ -383,8 +379,6 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"GetLatestReadingByMeterNo.{options.Device}", "3AC", logFileDirectory);
-
-            // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             return Successfull;
         }
 
@@ -422,7 +416,6 @@ namespace MultiSpeakClientV30ac
                 }
 
                 XmlUtil.WriteToFile(xml, $"GetLatestReadings.{objectsRemaining}", "3AC", logFileDirectory);
-                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
 
             return Successfull;
@@ -457,15 +450,11 @@ namespace MultiSpeakClientV30ac
             var transactionId = Guid.NewGuid().ToString();
             var expirationTime = (float)DateTime.Now.AddHours(1).ToOADate();
             var response = client.InitiateMeterReadByMeterNumber(meterNos, options.ResponseUrl, transactionId, expirationTime);
-
-            // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             if (response == null)
             {
                 return Successfull;
             }
 
-            // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
-            // so instead of passing response we paass repsonse.ToArray<object>()
             PrintClassStdOut.ErrorObjects(response.ToArray<object>());
             var serializer = new XmlSerializer(typeof(errorObject[]));
             string xml;
@@ -478,7 +467,7 @@ namespace MultiSpeakClientV30ac
                 }
             }
 
-            XmlUtil.WriteToFile(xml, $"InitiateMeterReadByMeterNumber.{options.Device}", "3AC", logFileDirectory);
+            XmlUtil.WriteToFile(xml, $"InitiateMeterReadByMeterNumber.{options.Device}.ERROR", "3AC", logFileDirectory);
             return xml;
         }
 
@@ -509,15 +498,11 @@ namespace MultiSpeakClientV30ac
 
             string[] meterNos = { options.Device };
             var response = client.InitiateDisconnectedStatus(meterNos);
-
-            // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             if (response == null)
             {
                 return Successfull;
             }
 
-            // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
-            // so instead of passing response we paass repsonse.ToArray<object>()
             PrintClassStdOut.ErrorObjects(response.ToArray<object>());
             var serializer = new XmlSerializer(typeof(errorObject[]));
             string xml;
@@ -530,7 +515,7 @@ namespace MultiSpeakClientV30ac
                 }
             }
 
-            XmlUtil.WriteToFile(xml, $"InitiateDisconnectedStatus.{options.Device}", "3AC", logFileDirectory);
+            XmlUtil.WriteToFile(xml, $"InitiateDisconnectedStatus.{options.Device}.ERROR", "3AC", logFileDirectory);
             return xml;
         }
 
@@ -562,8 +547,6 @@ namespace MultiSpeakClientV30ac
             string[] meterNos = { options.Device };
             var transactionId = Guid.NewGuid().ToString();
             var response = client.InitiateUsageMonitoring(meterNos, options.ResponseUrl, transactionId);
-
-            // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             if (response == null)
             {
                 return Successfull;
@@ -583,7 +566,7 @@ namespace MultiSpeakClientV30ac
                 }
             }
 
-            XmlUtil.WriteToFile(xml, $"InitiateUsageMonitoring.{options.Device}", "3AC", logFileDirectory);
+            XmlUtil.WriteToFile(xml, $"InitiateUsageMonitoring.{options.Device}.ERROR", "3AC", logFileDirectory);
             return xml;
         }
 
@@ -653,7 +636,6 @@ namespace MultiSpeakClientV30ac
                     break;
             }
 
-            // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             if (response == null)
             {
                 return Successfull;
@@ -743,8 +725,6 @@ namespace MultiSpeakClientV30ac
                     }
                 };
                 var response = client.ServiceLocationChangedNotification(serviceLocations);
-
-                // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
                 if (response == null)
                 {
                     return Successfull;
