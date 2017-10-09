@@ -94,17 +94,17 @@ namespace MultiSpeakClientV30ac
 
                 var client = new OA_Server { Url = options.EndPoint };
                 var header = new MultiSpeakMsgHeader
-                                 {
-                                     UserID = options.UserId,
-                                     Pwd = options.Pwd,
-                                     AppName = appName,
-                                     AppVersion = appVersion,
-                                     Company = options.Company,
-                                     Version = version,
-                                     MessageID = new Guid().ToString(),
-                                     TimeStamp = DateTime.Now,
-                                     TimeStampSpecified = true
-                                 };
+                {
+                    UserID = options.UserId,
+                    Pwd = options.Pwd,
+                    AppName = appName,
+                    AppVersion = appVersion,
+                    Company = options.Company,
+                    Version = version,
+                    MessageID = new Guid().ToString(),
+                    TimeStamp = DateTime.Now,
+                    TimeStampSpecified = true
+                };
                 client.MultiSpeakMsgHeaderValue = header;
 
                 // self-signed cert override
@@ -113,6 +113,7 @@ namespace MultiSpeakClientV30ac
                 switch (options.Method)
                 {
                     case "AssessmentLocationChangedNotification":
+                        message = AssessmentLocationChangedNotification(client, options);
                         break;
                     case "AssignCrewsToOutage":
                         break;
@@ -178,7 +179,6 @@ namespace MultiSpeakClientV30ac
                         break;
                     case "GetModifiedConnectivity":
                         break;
-                    
                     case "GetOutageDurationEvents":
                         message = GetOutageDurationEvents(client, options);
                         break;
@@ -187,7 +187,6 @@ namespace MultiSpeakClientV30ac
                     case "GetOutageEventStatus":
                         message = GetOutageEventStatus(client, options);
                         break;
-                    
                     case "GetOutageHistoryOnServiceLocation":
                         break;
                     case "GetOutageReasonCodes":
@@ -272,13 +271,141 @@ namespace MultiSpeakClientV30ac
         }
 
         /// <summary>
+        /// The assessment location changed notification.
+        /// </summary>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        /// <param name="options">
+        /// The options.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string AssessmentLocationChangedNotification(OA_Server client, Options options)
+        {
+            // Another way to teste for nulls is using null propagation
+            // which is really confusing to everyone I bet at the beginning.
+            // This one statement replaces the two below.
+            if (options?.Location == null)
+            {
+                Console.WriteLine("AssessmentLocationChangedNotification is missing Options or Options.Location");
+                return Fail;
+            }
+
+            /*if (options == null)
+            {
+                return Fail;
+            }
+
+            if (options.Location == null)
+            {
+                return Fail;
+            }*/
+
+
+            var locations = new[]
+                                {
+                                    new assessmentLocation
+                                        {
+                                            address =
+                                                new address
+                                                    {
+                                                        address1 = "4111 Newton Ave",
+                                                        address2 = "#16",
+                                                        city = "Shreveport",
+                                                        country = "USA",
+                                                        postalCode = "71104",
+                                                        state = "GA"
+                                                    },
+                                            AnyAttr = null,
+                                            assessmentList =
+                                                new[]
+                                                    {
+                                                        new assessment
+                                                            {
+                                                                jobNumber = "1",
+                                                                AnyAttr = null,
+                                                                category =
+                                                                    string.Empty,
+                                                                closedBy =
+                                                                    string.Empty,
+                                                                closedOn =
+                                                                    DateTime.Now,
+                                                                closedOnSpecified =
+                                                                    true,
+                                                                comments =
+                                                                    "no comment",
+                                                                created =
+                                                                    DateTime.Now,
+                                                                createdBy =
+                                                                    "craig nicholson",
+                                                                createdSpecified =
+                                                                    true
+                                                            }
+                                                    },
+                                            comments = "no comment",
+                                            extensions = null,
+                                            errorString = "put your errors here",
+                                            extensionsList = null,
+                                            facilityID = "12345",
+                                            gpsLocation =
+                                                new gpsLocation
+                                                    {
+                                                        collected = DateTime.Now,
+                                                        collectedSpecified = true,
+                                                        latitude = 93,
+                                                        latitudeSpecified = true,
+                                                        longitude = -87,
+                                                        longitudeSpecified = true
+                                                    },
+                                            gridLocation = "98223280,89458945",
+                                        }
+                                };
+            var transactionId = Guid.NewGuid().ToString();
+
+            var response = client.AssessmentLocationChangedNotification(locations, transactionId);
+
+            // We might not get a response, if so exit
+            if (response == null)
+            {
+                return Successfull;
+            }
+
+            // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+            // so instead of passing response we paass repsonse.ToArray<object>()
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            XmlUtil.WriteToFile(
+                xml,
+                $"ODEventNotification.{options.Device}.{options.EventType}",
+                "3AC",
+                logFileDirectory);
+            return xml;
+        }
+
+        /// <summary>
         /// The get all connectivity returns a dump of the entire connectivity model.  This method
         /// requires multiple requests using the LastSent and ObjectsRemaining
         /// </summary>
         /// <param name="client">
         /// The client.
         /// </param>
-        private static void GetAllConnectivity(OA_Server client)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetAllConnectivity(OA_Server client)
         {
             // objectsRemaining and LastSent variables and re-send if required.
             var objectsRemaining = 1;
@@ -307,6 +434,8 @@ namespace MultiSpeakClientV30ac
 
                 XmlUtil.WriteToFile(xml, $"GetAllConnectivity.{objectsRemaining}", "3AC", logFileDirectory);
             }
+
+            return Successfull;
         }
 
         /// <summary>
@@ -315,7 +444,10 @@ namespace MultiSpeakClientV30ac
         /// <param name="client">
         /// The client.
         /// </param>
-        private static void GetActiveOutages(OA_Server client)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetActiveOutages(OA_Server client)
         {
             var response = client.GetActiveOutages();
             Console.WriteLine("GetActiveOutages");
@@ -339,6 +471,8 @@ namespace MultiSpeakClientV30ac
 
             PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             XmlUtil.WriteToFile(xml, $"GetActiveOutages.{response.Length}", "3AC", logFileDirectory);
+
+            return Successfull;
         }
 
         /// <summary>
@@ -347,7 +481,10 @@ namespace MultiSpeakClientV30ac
         /// <param name="client">
         /// The client.
         /// </param>
-        private static void GetAllActiveOutageEvents(OA_Server client)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetAllActiveOutageEvents(OA_Server client)
         {
             // objectsRemaining and LastSent variables and re-send if required.
             var objectsRemaining = 1;
@@ -382,6 +519,8 @@ namespace MultiSpeakClientV30ac
                 PrintClassStdOut.PrintObject(
                     client.MultiSpeakMsgHeaderValue);
             }
+
+            return Successfull;
         }
 
         /// <summary>
@@ -393,17 +532,20 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void GetOutageDurationEvents(OA_Server client, Options options = null)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetOutageDurationEvents(OA_Server client, Options options = null)
         {
             if (options == null)
             {
-                return;
+                return Fail;
             }
 
             if (options.OutageEventId == null)
             {
                 Console.WriteLine("CLI options.OutageEventId is missing, please add -o YourOutageEventID");
-                return;
+                return Fail;
             }
 
             var response = client.GetOutageDurationEvents(options.OutageEventId);
@@ -463,6 +605,7 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"GetOutageDurationEvents.{options.OutageEventId}", "3AC", logFileDirectory);
+            return Successfull;
         }
 
         /// <summary>
@@ -474,18 +617,21 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void GetOutageEventStatus(OA_Server client, Options options = null)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetOutageEventStatus(OA_Server client, Options options = null)
         {
             if (options == null)
             {
                 Console.WriteLine("GetOutageEventStatus takes the parameter OutageEventID : -o YourOutageEventId");
-                return;
+                return Fail;
             }
 
             if (options.OutageEventId == null)
             {
                 Console.WriteLine("CLI options.OutageEventId is missing, please add -o YourOutageEventId");
-                return;
+                return Fail;
             }
 
             var response = client.GetOutageEventStatus(options.OutageEventId);
@@ -505,6 +651,7 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"GetOutageEventStatus.{options.OutageEventId}", "3AC", logFileDirectory);
+            return Successfull;
         }
 
         /// <summary>
@@ -516,18 +663,21 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void GetOutageStatusByLocation(OA_Server client, Options options = null)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetOutageStatusByLocation(OA_Server client, Options options = null)
         {
             if (options == null)
             {
                 Console.WriteLine("GetOutageStatusByLocation takes the parameter OutageEventID : -l YourLocationID");
-                return;
+                return Fail;
             }
 
             if (options.Location == null)
             {
                 Console.WriteLine("CLI options.Location is missing, please add -l YourLocationID");
-                return;
+                return Fail;
             }
 
             var location = new outageLocation
@@ -550,6 +700,7 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"GetOutageStatusByLocation.{options.Location}", "3AC", logFileDirectory);
+            return Successfull;
         }
 
         /// <summary>
@@ -561,23 +712,26 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void GetCustomerOutageHistory(OA_Server client, Options options = null)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetCustomerOutageHistory(OA_Server client, Options options = null)
         {
             if (options == null)
             {
-                return;
+                return Fail;
             }
 
             if (options.Account == null)
             {
                 Console.WriteLine("CLI options.Account is missing, please add -a YourAccount");
-                return;
+                return Fail;
             }
 
             if (options.Location == null)
             {
                 Console.WriteLine("CLI options.Location is missing, please add -l YourLocation");
-                return;
+                return Fail;
             }
 
             var response = client.GetCustomerOutageHistory(options.Account, options.Location);
@@ -615,6 +769,7 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"GetCustomerOutageHistory.{options.Account}.{options.Location}", "3AC", logFileDirectory);
+            return Successfull;
         }
 
         /// <summary>
@@ -626,17 +781,20 @@ namespace MultiSpeakClientV30ac
         /// <param name="options">
         /// The options.
         /// </param>
-        private static void GetCustomersAffectedByOutage(OA_Server client, Options options = null)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetCustomersAffectedByOutage(OA_Server client, Options options = null)
         {
             if (options == null)
             {
-                return;
+                return Fail;
             }
 
             if (options.OutageEventId == null)
             {
                 Console.WriteLine("CLI options.OutageEventId is missing, please add -o YourOutageEventID");
-                return;
+                return Fail;
             }
 
             var response = client.GetCustomersAffectedByOutage(options.OutageEventId);
@@ -654,6 +812,7 @@ namespace MultiSpeakClientV30ac
             }
 
             XmlUtil.WriteToFile(xml, $"GetCustomersAffectedByOutage.{options.OutageEventId}", "3AC", logFileDirectory);
+            return Successfull;
         }
 
         /// <summary>
@@ -662,7 +821,10 @@ namespace MultiSpeakClientV30ac
         /// <param name="client">
         /// The client.
         /// </param>
-        private static void GetAllCircuitElements(OA_Server client)
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetAllCircuitElements(OA_Server client)
         {
             // objectsRemaining and LastSent variables and re-send if required.
             var objectsRemaining = 1;
@@ -695,6 +857,8 @@ namespace MultiSpeakClientV30ac
                 XmlUtil.WriteToFile(xml, $"GetAllCircuitElements.{objectsRemaining}", "3AC", logFileDirectory);
                 PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
+
+            return Successfull;
         }
 
         #region SendCommands
@@ -702,29 +866,36 @@ namespace MultiSpeakClientV30ac
         /// <summary>
         /// Send Outage Detection Event Notification
         /// </summary>
-        /// <param name="client">Expects the OA_Server client</param>
-        /// <param name="options">Requires Device option</param>
-        private static void SendOdEventNotification(OA_Server client, Options options = null)
+        /// <param name="client">
+        /// Expects the OA_Server client
+        /// </param>
+        /// <param name="options">
+        /// Requires Device option
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string SendOdEventNotification(OA_Server client, Options options = null)
         {
             try
             {
                 if (options == null)
                 {
                     Console.WriteLine("SendOdEventNotification requires options.Device : -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 if (options.Device == null)
                 {
                     Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return;
+                    return Fail;
                 }
 
                 const string EventTypeError = "EventType is missing. Please review the required options for types of events.";
                 if (options.EventType == null)
                 {
                     Console.WriteLine(EventTypeError);
-                    return;
+                    return Fail;
                 }
 
                 outageEventType outEventType;
@@ -788,7 +959,7 @@ namespace MultiSpeakClientV30ac
                 // We might not get a response, if so exit
                 if (response == null)
                 {
-                    return;
+                    return Successfull;
                 }
 
                 // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
@@ -807,10 +978,12 @@ namespace MultiSpeakClientV30ac
                 }
 
                 XmlUtil.WriteToFile(xml, $"ODEventNotification.{options.Device}.{options.EventType}", "3AC", logFileDirectory);
+                return xml;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return ex.Message;
             }
         }
         #endregion
