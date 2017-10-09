@@ -19,7 +19,7 @@ namespace MultiSpeakClientV30ac
     internal class Program
     {
         /// <summary>
-        /// The file directory where the output files will be written
+        /// The directory where the output files will be written, output being the results from Gets and Errors.
         /// TODO: FIX THIS - MAKE IT CONFIGURATION
         /// </summary>
         private const string FileDirectory = @"C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\LG";
@@ -124,7 +124,7 @@ namespace MultiSpeakClientV30ac
                     case "CB_Server":
                         {
                             CbServerRequests.SetLogFileDirectory(FileDirectory);
-                            CbServerRequests.RunCommand(options, AppName, AppVersion, Version);
+                            CbServerRequests.RunCommand(options, AppName, AppVersion, Version, out message);
                             break;
                         }
 
@@ -152,7 +152,7 @@ namespace MultiSpeakClientV30ac
                     case "OA_Server":
                         {
                             OaServerRequests.SetLogFileDirectory(FileDirectory);
-                            OaServerRequests.RunCommand(options, AppName, AppVersion, Version);
+                            OaServerRequests.RunCommand(options, AppName, AppVersion, Version, out message);
                             break;
                         }
 
