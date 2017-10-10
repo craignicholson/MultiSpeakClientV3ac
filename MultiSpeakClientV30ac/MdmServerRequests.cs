@@ -131,7 +131,7 @@ namespace MultiSpeakClientV30ac
                         break;
                 }
 
-                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
+                // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
             catch (Exception ex)
             {
