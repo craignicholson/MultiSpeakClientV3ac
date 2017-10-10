@@ -162,7 +162,7 @@ namespace MultiSpeakClientV30ac
                         break;
                 }
 
-                PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
+                // PrintClassStdOut.PrintObject(client.MultiSpeakMsgHeaderValue);
             }
             catch (Exception ex)
             {
@@ -249,7 +249,21 @@ namespace MultiSpeakClientV30ac
             // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
             // so instead of passing response we pass repsonse.ToArray<object>()
             PrintClassStdOut.ErrorObjects(response.ToArray<object>());
-            return response[0].errorString;
+
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            XmlUtil.WriteToFile(xml, $"CancelUsageMonitoring.ERROR.{options.Device}", "3AC", logFileDirectory);
+            return xml;
         }
 
         /// <summary>
@@ -291,7 +305,7 @@ namespace MultiSpeakClientV30ac
                     }
                 }
 
-                XmlUtil.WriteToFile(xml, $"GetAMRSupportedMeters.{objectsRemaining}", "3AC", logFileDirectory);            
+                XmlUtil.WriteToFile(xml, $"GetAMRSupportedMeters.{objectsRemaining}", "3AC", logFileDirectory);
             }
 
             return Successfull;
@@ -659,19 +673,19 @@ namespace MultiSpeakClientV30ac
         /// </returns>
         private static string ServiceLocationChangeNotification(MR_Server client, Options options)
         {
-                if (options == null)
-                {
-                    return Fail;
-                }
+            if (options == null)
+            {
+                return Fail;
+            }
 
-                if (options.Device == null)
-                {
-                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
-                    return Fail;
-                }
+            if (options.Device == null)
+            {
+                Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                return Fail;
+            }
 
-                var serviceLocations = new[]
-                {
+            var serviceLocations = new[]
+            {
                     new serviceLocation
                     {
                         objectID  = options.Device,  // Stuff the device id here for testing.
@@ -724,14 +738,26 @@ namespace MultiSpeakClientV30ac
                         description = "MTR ON A/E HOME"
                     }
                 };
-                var response = client.ServiceLocationChangedNotification(serviceLocations);
-                if (response == null)
-                {
-                    return Successfull;
-                }
+            var response = client.ServiceLocationChangedNotification(serviceLocations);
+            if (response == null)
+            {
+                return Successfull;
+            }
 
-                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
-                return response[0].errorString;
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            XmlUtil.WriteToFile(xml, $"ServiceLocationChangeNotification.{options.Device}.ERROR", "3AC", logFileDirectory);
+            return xml;
         }
     }
 }
