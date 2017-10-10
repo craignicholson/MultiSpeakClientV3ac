@@ -269,3 +269,77 @@ MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u milsoft -p milsoft -c Milsoft -s MDM_Server -m  InitiateOutageDetectionEventRequest -d 0132786 -r http://10.86.1.81/SimulatorFakeOMS/MultiSpeak/30ac/OA_Server.asmx
 
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u milsoft -p milsoft -c Milsoft -s MDM_Server -m  InitiateOutageDetectionEventRequest -d 15524652 -r http://10.86.1.81/SimulatorFakeOMS/MultiSpeak/30ac/OA_Server.asmx
+
+
+Send ODEventNotifications via the MsgPublisher Setup
+
+
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MDMServices/Multispeak/Sensus/30z/OA_Server.asmx -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d 5373213 -v Restoration
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MDMServices/Multispeak/Sensus/30z/OA_Server.asmx -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d 32159562 -v Restoration
+
+Scans every 5 seconds
+
+USE [MDMServices]
+GO
+
+INSERT INTO [dbo].[PublishSubscribers]
+           ([Company]
+           ,[MethodNameID]
+           ,[MethodName]
+           ,[AppVersion]
+           ,[UserID]
+           ,[Pwd]
+           ,[PublishToUrl]
+           ,[ValidatePublishUrl]
+           ,[IsDeleted]
+           ,[IsEnabled]
+           ,[CreatedDate]
+           ,[LastUpdated]
+           ,[UpdatedBy])
+     VALUES
+           'Milsoft'
+           ,2
+           ,ODEventNotification
+           ,'30z'
+           ,'ElectSolve'
+           ,'ElectSolve2017-Testing'
+           ,'http://12.218.155.140:85/soap/OA_Server'
+           ,false
+           ,false
+           ,false
+           ,GetDate()
+           ,GetDate()
+           ,'cnicholson')
+GO
+
+
+INSERT INTO [dbo].[PublishSubscribers]
+           ([Company]
+           ,[MethodNameID]
+           ,[MethodName]
+           ,[AppVersion]
+           ,[UserID]
+           ,[Pwd]
+           ,[PublishToUrl]
+           ,[ValidatePublishUrl]
+           ,[IsDeleted]
+           ,[IsEnabled]
+           ,[CreatedDate]
+           ,[LastUpdated]
+           ,[UpdatedBy])
+     VALUES
+           'Milsoft'
+           ,2
+           ,ODEventNotification
+           ,'30z'
+           ,'electsolve'
+           ,'electsolve'
+           ,'http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/OA_Server.asmx'
+           ,true
+           ,false
+           ,true
+           ,GetDate()
+           ,GetDate()
+           ,'cnicholson')
+GO
