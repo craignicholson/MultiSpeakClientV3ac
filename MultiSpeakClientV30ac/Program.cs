@@ -67,6 +67,11 @@ namespace MultiSpeakClientV30ac
 
             // Console.WriteLine($"{options.Server} | {options.Method} |  {wallTime.Elapsed} | {Result} ");
             Log.Info($"HEADER | {options.Method}-{options.Server} | {wallTime.Elapsed}");
+            if (message != "SUCCESS" || message != "FAIL")
+            {
+                message = "FAIL - " + message;
+            }
+
             Log.Info($"Detail | Message | {message}");
             var t = options.GetType();
             foreach (var pi in t.GetProperties())

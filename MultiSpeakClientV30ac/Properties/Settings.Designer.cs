@@ -82,5 +82,15 @@ namespace MultiSpeakClientV30ac.Properties {
                 return ((string)(this["MultiSpeakClientV30ac_proxyEA3ac_EA_Server"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://63.164.96.175/MultiSpeak416/MDM_SERVER.asmx")]
+        public string MultiSpeakClientV30ac_proxyMDM416_MDM_Server {
+            get {
+                return ((string)(this["MultiSpeakClientV30ac_proxyMDM416_MDM_Server"]));
+            }
+        }
     }
 }

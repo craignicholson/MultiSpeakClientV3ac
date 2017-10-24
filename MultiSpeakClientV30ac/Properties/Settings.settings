@@ -20,5 +20,8 @@
     <Setting Name="MultiSpeakClientV30ac_proxyEA3ac_EA_Server" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">http://localhost:55273/EA_Server.asmx</Value>
     </Setting>
+    <Setting Name="MultiSpeakClientV30ac_proxyMDM416_MDM_Server" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://63.164.96.175/MultiSpeak416/MDM_SERVER.asmx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

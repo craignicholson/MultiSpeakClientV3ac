@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://63.164.96.175/MultiSpeak416/MDM_SERVER.asmx?wsdl" docRef="http://63.164.96.175/MultiSpeak416/MDM_SERVER.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://63.164.96.175/MultiSpeak416/MDM_SERVER.asmx" xmlns:q1="http://www.multispeak.org/Version_4.1_Release" binding="q1:MDM_ServerSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://63.164.96.175/MultiSpeak416/MDM_SERVER.asmx" xmlns:q2="http://www.multispeak.org/Version_4.1_Release" binding="q2:MDM_ServerSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

@@ -17,6 +17,19 @@ namespace MultiSpeakClientV30ac
     using System.Xml.Serialization;
 
     using MultiSpeakClientV30ac.proxyMDM3ac;
+    using MultiSpeakClientV30ac.proxyMDM416;
+
+    using action = MultiSpeakClientV30ac.proxyMDM3ac.action;
+    using connectDisconnectEvent = MultiSpeakClientV30ac.proxyMDM3ac.connectDisconnectEvent;
+    using CDState = MultiSpeakClientV30ac.proxyMDM3ac.CDState;
+    using errorObject = MultiSpeakClientV30ac.proxyMDM3ac.errorObject;
+    using extensionsItem = MultiSpeakClientV30ac.proxyMDM3ac.extensionsItem;
+    using extensionsItemExtType = MultiSpeakClientV30ac.proxyMDM3ac.extensionsItemExtType;
+    using loadActionCode = MultiSpeakClientV30ac.proxyMDM3ac.loadActionCode;
+    using MDM_Server = MultiSpeakClientV30ac.proxyMDM3ac.MDM_Server;
+    using MultiSpeakMsgHeader = MultiSpeakClientV30ac.proxyMDM3ac.MultiSpeakMsgHeader;
+    using readingValue = MultiSpeakClientV30ac.proxyMDM3ac.readingValue;
+    using serviceType = MultiSpeakClientV30ac.proxyMDM3ac.serviceType;
 
     /// <summary>
     /// The MDM server requests.
@@ -99,6 +112,20 @@ namespace MultiSpeakClientV30ac
                 };
                 client.MultiSpeakMsgHeaderValue = header;
 
+                var client2 = new proxyMDM416.MDM_Server() { Url = options.EndPoint, };
+                var header2 = new proxyMDM416.MultiSpeakMsgHeader()
+                {
+                    UserID = options.UserId,
+                    Pwd = options.Pwd,
+                    AppName = appName,
+                    AppVersion = appVersion,
+                    Company = options.Company,
+                    MessageID = new Guid().ToString(),
+                    TimeStamp = DateTime.Now,
+                    TimeStampSpecified = true
+                };
+                client2.MultiSpeakMsgHeaderValue = header2;
+
                 ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
 
                 // Goals keep the Methods in alpha order.
@@ -124,6 +151,9 @@ namespace MultiSpeakClientV30ac
                         break;
                     case "ReadingChangedNotification":
                         message = ReadingChangedNotification(client, options);
+                        break;
+                    case "OutageEventChangedNotification":
+                        message = OutageEventChangedNotification(client2, options);
                         break;
                     default:
                         Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
@@ -486,23 +516,104 @@ namespace MultiSpeakClientV30ac
                 return Fail;
             }
 
+            // Populate the entire structure out so we can test the entire meterReads object[]
             var meterReads = new[]
                                  {
                                          new meterRead
                                              {
                                                  meterNo = options.Device,
-                                                 comments = string.Empty,
-                                                 deviceID = string.Empty,
-                                                 errorString = string.Empty,
+                                                 comments = "MultiSpeakClient Test Sent ReadingChangedNotification",
+                                                 deviceID = options.Device,
+                                                 errorString = "No errors reported.",
                                                  AnyAttr = null,
                                                  extensions = null,
-                                                 extensionsList = null,
+                                                 extensionsList = new[]
+                                                                      {
+                                                                          new extensionsItem
+                                                                          {
+                                                                              extName = "AMISystem",
+                                                                              extTypeSpecified = true,
+                                                                              extType = extensionsItemExtType.Name,
+                                                                              extValue = "Sensus"
+                                                                          },
+                                                                          new extensionsItem
+                                                                          {
+                                                                              extName = "Routed From",
+                                                                              extTypeSpecified = true,
+                                                                              extType = extensionsItemExtType.Name,
+                                                                              extValue = "MultiSpeakBroker"
+                                                                          },
+                                                                          new extensionsItem
+                                                                          {
+                                                                               extName = "Number of Retries",
+                                                                               extTypeSpecified = true,
+                                                                               extType = extensionsItemExtType.@int,
+                                                                               extValue = "1"
+                                                                          },
+                                                                      },
                                                  kVAr = 1f,
                                                  kVArSpecified = true,
                                                  kW = 10f,
+                                                 kWSpecified = true,
+                                                 kWDateTime = DateTime.Now.AddDays(-1),
+                                                 kWDateTimeSpecified = true,
+                                                 negKWh = "-1",
+                                                 posKWh = "1",
+                                                 objectID = options.Device,
+                                                 readingDate = DateTime.Now,
+                                                 readingDateSpecified = true,
+                                                 readingValues = new[]
+                                                                     {
+                                                                         new readingValue
+                                                                             {
+                                                                                 dateTime = DateTime.Now,
+                                                                                 dateTimeSpecified = true,
+                                                                                 extensionsList = new[]
+                                                                                              {
+                                                                                                  new extensionsItem
+                                                                                                  {
+                                                                                                          extName = "AMISystem",
+                                                                                                          extTypeSpecified = true,
+                                                                                                          extType = extensionsItemExtType.Name,
+                                                                                                          extValue = "Sensus"
+                                                                                                  },
+                                                                                                  new extensionsItem
+                                                                                                  {
+                                                                                                      extName = "AMIUom",
+                                                                                                      extTypeSpecified = true,
+                                                                                                      extType = extensionsItemExtType.Name,
+                                                                                                      extValue = "kWh-R"
+                                                                                                  },
+                                                                                                  new extensionsItem
+                                                                                                  {
+                                                                                                      extName = "AMIDescription",
+                                                                                                      extTypeSpecified = true,
+                                                                                                      extType = extensionsItemExtType.Name,
+                                                                                                      extValue = "Kilowatt Reverse Flow Channel 1"
+                                                                                                  }
+                                                                                              },
+                                                                                 extensions = null,
+                                                                                 value = "100",
+                                                                                 fieldName = "Check the extentionList",
+                                                                                 name = "KiloWatt Hours",
+                                                                                 readingType = "On Demand Read",
+                                                                                 readingValueType = readingValueReadingValueType.Energy,
+                                                                                 readingValueTypeSpecified = true,
+                                                                                 units = "kWh"
+                                                                             }
+                                                                     },
+                                                 verb = action.New,
+                                                 TOUReadings = new[] { new TOUReading { } },
+                                                 momentaryEvents = "No momentary events to report at this time.",
+                                                 momentaryOutages = "No mommentary outages to report at this time.",
+                                                 phase = phaseCd.A,
+                                                 phaseSpecified = true,
+                                                 replaceID = "We are not using replace id at this time.",
+                                                 sustainedOutages = "No sustained outages reported",
+                                                 utility = "My Power Company"
                                              }
                                      };
-            var transactionId = Guid.NewGuid().ToString();
+            var transactionId = options.TransactionId;
             var response = client.ReadingChangedNotification(meterReads, transactionId);
             if (response == null)
             {
@@ -522,6 +633,79 @@ namespace MultiSpeakClientV30ac
 
             PrintClassStdOut.ErrorObjects(response.ToArray<object>());
             XmlUtil.WriteToFile(xml, $"ReadingChangedNotification.ERROR", "3AC", logFileDirectory);
+            return xml;
+        }
+
+        /// <summary>
+        /// The outage event changed notification.
+        /// </summary>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        /// <param name="options">
+        /// The options.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string OutageEventChangedNotification(proxyMDM416.MDM_Server client, Options options)
+        {
+            if (options == null)
+            {
+                return Fail;
+            }
+
+            if (options.Device == null)
+            {
+                Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                return Fail;
+            }
+
+            var outageEvents = new[]
+                                   {
+                                       new proxyMDM416.outageEvent
+                                       {
+                                           message = new proxyMDM416.message
+                                           {
+                                               comments = "Comments rom test app",
+                                               errorString = "Error String from test app"
+                                           },
+                                           actualFault = "Actual Fault from test app",
+                                           area = "Area of the outage",
+                                           comments = "Comments from root object",
+                                           completed = DateTime.Now,
+                                           completedSpecified = true,
+                                           crewActionEvents = new proxyMDM416.crewActionEvent[] { },
+                                           crewsDispatched = new[] { "Crew 1", "Crew 2" },
+                                           customersAffected = "100",
+                                           startTime = DateTime.Now.AddHours(-3),
+                                           startTimeSpecified = true 
+                                       }
+                                   };
+
+            var response = client.OutageEventChangedNotification(outageEvents);
+            if (response == null)
+            {
+                return Successfull;
+            }
+
+            var serializer = new XmlSerializer(typeof(proxyMDM416.errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            if (response.Length > 0)
+            {
+                XmlUtil.WriteToFile(xml, $"ReadingChangedNotification.ERROR", "3AC", logFileDirectory);
+            }
+
             return xml;
         }
     }
