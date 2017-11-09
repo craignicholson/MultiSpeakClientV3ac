@@ -243,6 +243,13 @@ MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSol
 MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetOutageDurationEvents -o 2017-08-28-2661
 MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetOutageDurationEvents -o 2017-08-29-2707
 
+
+
+MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetOutageDurationEvents -o 2017-10-27-0002
+MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetOutageDurationEvents -o 2017-10-27-0002
+MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetOutageDurationEvents -o 2017-10-27-0003
+
+
 MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m GetOutageDurationEvents -o 2017-08-28-2677
 Success on 112 GetOutageDurationEvents
 
@@ -275,7 +282,16 @@ MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30
 
 Send ODEventNotifications via the MsgPublisher Setup
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MDMServices/Multispeak/Sensus/30z/OA_Server.asmx -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d 5373213 -v Restoration
-MultiSpeakClientV30ac.exe -e http://63.164.96.175/MDMServices/Multispeak/Sensus/30z/OA_Server.asmx -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d 32159562 -v Restoration
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MDMServices/Multispeak/Sensus/30z/OA_Server.asmx -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d F07DF930 -v Restoration
+
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MDMServices/Multispeak/Sensus/30z/OA_Server.asmx -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d 99280373 -v Restoration
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MDMServices/Multispeak/Sensus/30z/OA_Server.asmx -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d 99280373 -v Restoration
+
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MDMServices/Multispeak/Sensus/30z/OA_Server.asmx -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d 99280373 -v Outage
+
+
+MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d F07DF930 -v Restoration
+MultiSpeakClientV30ac.exe -e http://12.218.155.140:85/soap/OA_Server -u ElectSolve -p ElectSolve2017-Testing -c ElectSolve -s OA_Server -m  ODEventNotification -d 99280373 -v Restoration
 
 
 Send OutageEventChangedNotification to v416
@@ -298,6 +314,16 @@ MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeak416/MDM_SERVER.asmx -u 
 MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeak416/MDM_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s MDM_Server -m  OutageEventChangedNotification -d 5373213
 MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeak416/MDM_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s MDM_Server -m  OutageEventChangedNotification -d 5373213
 MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeak416/MDM_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s MDM_Server -m  OutageEventChangedNotification -d 5373213
+
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeak416/NOT_SERVER.asmx -u milsoft -p morty -c Milsoft -s NOT_Server -m  OutageEventChangedNotification -d 5373213
+
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeak416/NOT_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s NOT_Server -m  OutageEventChangedNotification -d 5373213
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeak416/NOT_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s NOT_Server -m  TransformerBankChangedNotification -d 5373213
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeak416/NOT_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s NOT_Server -m  ServiceLocationNetworkChangedNotification -d 5373213
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeak416/NOT_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s NOT_Server -m  OutageEventChangedNotification -d 5373213
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeak416/NOT_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s NOT_Server -m  TransformerBankChangedNotification -d 5373213
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeak416/NOT_SERVER.asmx -u milsoft -p milsoft1 -c Milsoft -s NOT_Server -m  ServiceLocationNetworkChangedNotification -d 5373213
 
 
 Scans every 5 seconds

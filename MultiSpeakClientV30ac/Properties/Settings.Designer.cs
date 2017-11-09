@@ -92,5 +92,15 @@ namespace MultiSpeakClientV30ac.Properties {
                 return ((string)(this["MultiSpeakClientV30ac_proxyMDM416_MDM_Server"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:50289/NOT_Server.asmx")]
+        public string MultiSpeakClientV30ac_proxyNOT416_NOT_Server {
+            get {
+                return ((string)(this["MultiSpeakClientV30ac_proxyNOT416_NOT_Server"]));
+            }
+        }
     }
 }

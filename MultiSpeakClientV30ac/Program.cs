@@ -22,7 +22,7 @@ namespace MultiSpeakClientV30ac
         /// The directory where the output files will be written, output being the results from Gets and Errors.
         /// TODO: FIX THIS - MAKE IT CONFIGURATION
         /// </summary>
-        private const string FileDirectory = @"C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\LG";
+        private const string FileDirectory = @"C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\Milsoft";
 
         /// <summary>
         /// The MultiSpeak Message Header .Version, Version of MultiSpeak
@@ -138,6 +138,13 @@ namespace MultiSpeakClientV30ac
                             EaServerRequests.SetLogFileDirectory(FileDirectory);
                             EaServerRequests.RunCommand(options, AppName, AppVersion, Version);
                             throw new NotImplementedException($"{options.Server} Server is not available. Not Implmented in this MultiSpeakClientV3ac");
+                        }
+
+                    case "NOT_Server":
+                        {
+                            NotServerRequests.SetLogFileDirectory(FileDirectory);
+                            NotServerRequests.RunCommand(options, AppName, AppVersion, Version, out message);
+                            break;
                         }
 
                     case "MDM_Server":

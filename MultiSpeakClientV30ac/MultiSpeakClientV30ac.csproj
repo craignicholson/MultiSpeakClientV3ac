@@ -54,6 +54,7 @@
     <Compile Include="EaServerRequests.cs" />
     <Compile Include="MdmServerRequests.cs" />
     <Compile Include="MrServerRequests.cs" />
+    <Compile Include="NotServerRequests.cs" />
     <Compile Include="OaServerRequests.cs" />
     <Compile Include="OdServerRequests.cs" />
     <Compile Include="Options.cs" />
@@ -86,6 +87,11 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\proxyMR3ac\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\proxyNOT416\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -594,6 +600,20 @@
     <None Include="Web References\proxyMR3ac\schedule.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\proxyNOT416\domainMember.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\proxyNOT416\errorObject.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\proxyNOT416\NOT_Server.wsdl" />
+    <None Include="Web References\proxyNOT416\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\proxyNOT416\registrationInfo.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\proxyOA3ac\assessmentLocation.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
@@ -698,6 +718,17 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>MultiSpeakClientV30ac_proxyMDM416_MDM_Server</CachedSettingsPropName>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://localhost:50289/NOT_Server.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\proxyNOT416\</RelPath>
+      <UpdateFromURL>http://localhost:50289/NOT_Server.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>MultiSpeakClientV30ac_proxyNOT416_NOT_Server</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://localhost:55273/CB_Server.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\proxyCB3ac\</RelPath>
@@ -785,6 +816,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\proxyMDM416\MDM_SERVER.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\proxyNOT416\NOT_Server.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

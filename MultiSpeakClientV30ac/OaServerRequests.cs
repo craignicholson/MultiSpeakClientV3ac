@@ -604,6 +604,7 @@ namespace MultiSpeakClientV30ac
                 }
             }
 
+            Console.WriteLine(logFileDirectory);
             XmlUtil.WriteToFile(xml, $"GetOutageDurationEvents.{options.OutageEventId}", "3AC", logFileDirectory);
             return Successfull;
         }
@@ -942,7 +943,8 @@ namespace MultiSpeakClientV30ac
                         outageDetectDeviceType = outageDetectDeviceType.Meter,
                         outageLocation = new outageLocation
                                              {
-                            meterNo = options.Device
+                            meterNo = options.Device,
+                            
                         },
                         messageList = new[]
                         {

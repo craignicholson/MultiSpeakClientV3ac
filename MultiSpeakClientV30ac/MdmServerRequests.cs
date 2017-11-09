@@ -152,6 +152,9 @@ namespace MultiSpeakClientV30ac
                     case "ReadingChangedNotification":
                         message = ReadingChangedNotification(client, options);
                         break;
+                    case "ReadingChangedNotificationAmpTest":
+                        message = ReadingChangedNotificationAmpTest(client2, options);
+                        break;
                     case "OutageEventChangedNotification":
                         message = OutageEventChangedNotification(client2, options);
                         break;
@@ -611,6 +614,63 @@ namespace MultiSpeakClientV30ac
                                                  replaceID = "We are not using replace id at this time.",
                                                  sustainedOutages = "No sustained outages reported",
                                                  utility = "My Power Company"
+                                             }
+                                     };
+            var transactionId = options.TransactionId;
+            var response = client.ReadingChangedNotification(meterReads, transactionId);
+            if (response == null)
+            {
+                return Successfull;
+            }
+
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            XmlUtil.WriteToFile(xml, $"ReadingChangedNotification.ERROR", "3AC", logFileDirectory);
+            return xml;
+        }
+
+        /// <summary>
+        /// Send Reading Changed Notification
+        /// </summary>
+        /// <param name="client">
+        /// the client
+        /// </param>
+        /// <param name="options">
+        /// out options
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string ReadingChangedNotificationAmpTest(proxyMDM416.MDM_Server client, Options options)
+        {
+            if (options == null)
+            {
+                return Fail;
+            }
+
+            if (options.Device == null)
+            {
+                Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                return Fail;
+            }
+
+            // Populate the entire structure out so we can test the entire meterReads object[]
+            var meterReads = new[]
+                                 {
+                                         new proxyMDM416.meterReading
+                                             {                                             
+                                                 comments = "MultiSpeakClient Test Sent ReadingChangedNotification",
+                                                 errorString = "No errors reported.",
                                              }
                                      };
             var transactionId = options.TransactionId;
