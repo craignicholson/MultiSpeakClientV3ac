@@ -24,6 +24,8 @@ mongoimport --host mongodb1.example.net --port 37017 --username user --password 
 
 cd C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug
 
+
+
 Test 1 the Client Directly
 Test 2 the Broker Directly
 This allows us to use the log to compare the error messages so we can clean up inconsitant error messages in the broker.
@@ -33,21 +35,29 @@ MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30
 
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetAMRSupportedMeters
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetAMRSupportedMeters
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetAMRSupportedMeters
+
+
+
  
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/CD_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m  GetCDSupportedMeters
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m  GetCDSupportedMeters
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m  GetCDSupportedMeters
+
 
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/CD_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m  GetCDMeterState -d 100
-MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m  GetCDMeterState -d 100
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m  GetCDMeterState -d F06C60B1
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m  GetCDMeterState -d F06C60B1
 
-MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/CD_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m  GetCDMeterState -d F07DF930
-MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m  GetCDMeterState -d F07DF930
 
-MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetHistoryLogByMeterNo -d 100
-MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetHistoryLogByMeterNo -d LG901182274
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetHistoryLogByMeterNo -d F06C60B1
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetHistoryLogByMeterNo -d F06C60B1
 
-MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetLatestReadingByMeterNo -d 100
-MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetLatestReadingByMeterNo -d 100
+
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetLatestReadingByMeterNo -d F06C60B1
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetLatestReadingByMeterNo -d F06C60B1
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m  GetLatestReadingByMeterNo -d F06C60B1
+
 ** Miss match between error messagaes. see logs **
 
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m  GetLatestReadingByMeterNo -d LG901182274
@@ -86,7 +96,11 @@ System.Object[] >
         eventTime : 1/1/0001 12:00:00 AM
         eventTimeSpecified : False
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m   InitiateConnectDisconnect -d 00101 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/CB_Server.asmx
-???
+
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m   InitiateConnectDisconnect -d F06C60B1 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/CB_Server.asmx
+
+
 
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/CD_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m  InitiateConnectDisconnect -d 100 -r http://63.164.96.175/SimulatorFakeCIS/MultiSpeak/30ac/CB_Server.asmx
 System.Object[] >
@@ -131,7 +145,7 @@ MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/CD_CB.asmx
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateMeterReadByMeterNumber -d 00101 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/CB_Server.asmx
 
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 00101 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
-MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateMeterReadByMeterNumber -d M2154890648 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/MDM_Server.asmx
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateMeterReadByMeterNumber -d F06C60B1 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/MDM_Server.asmx
 
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d M2154890647 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
 errorString : Meter(s) M2154890647 does not exist or does not support on demand reads.
@@ -212,6 +226,19 @@ MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d 100 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateMeterReadByMeterNumber -d M2154890648 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/MDM_Server.asmx
 
+-------------------today
+
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m  PingUrl
+MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/MR_CB.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MR_Server -m   InitiateMeterReadByMeterNumber -d F06C60B1 -r http://63.164.96.175/SimulatorCraig/MultiSpeak/30ac/MDM_Server.asmx
+
+
+MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MDM_Server -m  PingUrl
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3 -c FakeCISMSpeak3 -s MR_Server -m   InitiateMeterReadByMeterNumber -d F06C60B1 -r http://10.86.1.81/SimulatorFakeCIS/MultiSpeak/30ac/MDM_Server.asmx
+
+MultiSpeakClientV30ac.exe -e http://10.86.1.81/MultiSpeakBroker/MultiSpeak/30ac/1/CB_Server.asmx -u LG -p test09072017 -c LG -s CB_Server -m ReadingChangedNotfiication -d F06C60B1 -t a2586195-f94c-46b6-a04a-ce0acd3ae082
+
+
+-------------------today
 
 MultiSpeakClientV30ac.exe -e http://demo.turtletech.com/latest/webAPI/OD_OA.asmx -u UNITILTST -p Unitil1! -c ElectSolve -s MDM_Server -m  InitiateOutageDetectionEventRequest -d F07DF930 -r http://10.86.1.81/SimulatorCraig/MultiSpeak/30ac/OA_Server.asmx
 MultiSpeakClientV30ac.exe -e http://63.164.96.175/MultiSpeakBroker/MultiSpeak/30ac/1/MDM_Server.asmx -u FakeCISMSpeak3 -p FakeCISMSpeak3! -c FakeCISMSpeak3 -s MDM_Server -m  InitiateOutageDetectionEventRequest -d F07DF930 -r http://10.86.1.81/SimulatorCraig/MultiSpeak/30ac/OA_Server.asmx

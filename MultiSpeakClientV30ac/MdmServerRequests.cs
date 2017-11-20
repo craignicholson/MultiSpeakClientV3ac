@@ -367,7 +367,12 @@ namespace MultiSpeakClientV30ac
                                {
                                    new connectDisconnectEvent
                                        {
-                                         meterNo  = options.Device
+                                         meterNo  = options.Device,
+                                         loadActionCodeSpecified = true,
+                                         loadActionCode = loadActionCode.Disconnect,
+                                         meterID = options.Device,
+                                         objectID = options.Device,
+                                         comments = "testing for electsolve"
                                        }
                                };
             var transactionId = Guid.NewGuid().ToString();
