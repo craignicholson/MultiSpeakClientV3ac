@@ -20,8 +20,8 @@ namespace MultiSpeakClientV30ac
     using MultiSpeakClientV30ac.proxyMDM416;
 
     using action = MultiSpeakClientV30ac.proxyMDM3ac.action;
-    using connectDisconnectEvent = MultiSpeakClientV30ac.proxyMDM3ac.connectDisconnectEvent;
     using CDState = MultiSpeakClientV30ac.proxyMDM3ac.CDState;
+    using connectDisconnectEvent = MultiSpeakClientV30ac.proxyMDM3ac.connectDisconnectEvent;
     using errorObject = MultiSpeakClientV30ac.proxyMDM3ac.errorObject;
     using extensionsItem = MultiSpeakClientV30ac.proxyMDM3ac.extensionsItem;
     using extensionsItemExtType = MultiSpeakClientV30ac.proxyMDM3ac.extensionsItemExtType;
@@ -92,38 +92,43 @@ namespace MultiSpeakClientV30ac
         /// <param name="message">
         /// Message can be error or generic message for fail or success.
         /// </param>
-        public static void RunCommand(Options options, string appName, string appVersion, string version, out string message)
+        public static void RunCommand(
+            Options options,
+            string appName,
+            string appVersion,
+            string version,
+            out string message)
         {
             try
             {
                 message = string.Empty;
                 var client = new MDM_Server() { Url = options.EndPoint, };
                 var header = new MultiSpeakMsgHeader()
-                {
-                    UserID = options.UserId,
-                    Pwd = options.Pwd,
-                    AppName = appName,
-                    AppVersion = appVersion,
-                    Company = options.Company,
-                    Version = version,
-                    MessageID = new Guid().ToString(),
-                    TimeStamp = DateTime.Now,
-                    TimeStampSpecified = true
-                };
+                                 {
+                                     UserID = options.UserId,
+                                     Pwd = options.Pwd,
+                                     AppName = appName,
+                                     AppVersion = appVersion,
+                                     Company = options.Company,
+                                     Version = version,
+                                     MessageID = new Guid().ToString(),
+                                     TimeStamp = DateTime.Now,
+                                     TimeStampSpecified = true
+                                 };
                 client.MultiSpeakMsgHeaderValue = header;
 
                 var client2 = new proxyMDM416.MDM_Server() { Url = options.EndPoint, };
                 var header2 = new proxyMDM416.MultiSpeakMsgHeader()
-                {
-                    UserID = options.UserId,
-                    Pwd = options.Pwd,
-                    AppName = appName,
-                    AppVersion = appVersion,
-                    Company = options.Company,
-                    MessageID = new Guid().ToString(),
-                    TimeStamp = DateTime.Now,
-                    TimeStampSpecified = true
-                };
+                                  {
+                                      UserID = options.UserId,
+                                      Pwd = options.Pwd,
+                                      AppName = appName,
+                                      AppVersion = appVersion,
+                                      Company = options.Company,
+                                      MessageID = new Guid().ToString(),
+                                      TimeStamp = DateTime.Now,
+                                      TimeStampSpecified = true
+                                  };
                 client2.MultiSpeakMsgHeaderValue = header2;
 
                 ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
@@ -158,6 +163,9 @@ namespace MultiSpeakClientV30ac
                     case "OutageEventChangedNotification":
                         message = OutageEventChangedNotification(client2, options);
                         break;
+                    case "ODEventNotification":
+                        message = ODEventNotification(client2, options);
+                        break;
                     default:
                         Console.WriteLine($"MultiSpeakClient3AC {options.Method} not found in {options.Server}.");
                         Console.WriteLine("Check the list of methods in the README.md for each Server.");
@@ -177,6 +185,129 @@ namespace MultiSpeakClientV30ac
                 }
             }
         }
+
+        private static string ODEventNotification(proxyMDM416.MDM_Server client2, Options options)
+        {
+            try
+            {
+                if (options == null)
+                {
+                    Console.WriteLine("SendOdEventNotification requires options.Device : -d 123456789");
+                    return Fail;
+                }
+
+                if (options.Device == null)
+                {
+                    Console.WriteLine("Device is missing. Please add a meterNo: -d 123456789");
+                    return Fail;
+                }
+
+                const string eventTypeError =
+                    "EventType is missing. Please review the required options for types of events.";
+                if (options.EventType == null)
+                {
+                    Console.WriteLine(eventTypeError);
+                    return Fail;
+                }
+
+                proxyMDM416.outageEventType outEventType;
+                switch (options.EventType)
+                {
+                    case "Inferred":
+                        outEventType = proxyMDM416.outageEventType.Inferred;
+                        break;
+                    case "Instantaneous":
+                        outEventType = proxyMDM416.outageEventType.Instantaneous;
+                        break;
+                    case "Outage":
+                        outEventType = proxyMDM416.outageEventType.Outage;
+                        break;
+                    case "NoResponse":
+                        outEventType = proxyMDM416.outageEventType.NoResponse;
+                        break;
+                    case "PowerOff":
+                        outEventType = proxyMDM416.outageEventType.PowerOff;
+                        break;
+                    case "PowerOn":
+                        outEventType = proxyMDM416.outageEventType.PowerOn;
+                        break;
+                    case "Restoration":
+                        outEventType = proxyMDM416.outageEventType.Restoration;
+                        break;
+                    default:
+                        outEventType = proxyMDM416.outageEventType.Outage;
+                        Console.WriteLine(
+                            $"{options.EventType} not found. Defaulting to Outage. Did you mean Inferred,Instantaneous,Outage,NoResponse,PowerOff,PowerOn,Restoration?");
+                        break;
+                }
+
+                var transactionId = Guid.NewGuid().ToString();
+                transactionId = DateTime.Now.ToString("u");
+                var outages = new[]
+                                  {
+                                      new proxyMDM416.outageDetectionEvent
+                                          {
+                                              eventTime = DateTime.Now.AddHours(-3),
+                                              eventTimeSpecified = true,
+                                              outageEventType = outEventType,
+                                              outageEventTypeSpecified = true,
+                                              //outageDetectDeviceID = options.Device,
+                                              //outageDetectDeviceTypeSpecified = true,
+                                              //outageDetectDeviceType =
+                                              //    proxyMDM416.outageDetectDeviceType.Meter,
+                                              //outageLocation =
+                                              //    new proxyMDM416.outageLocation
+                                              //        {
+                                              //            meterNo = options.Device,
+                                              //        },
+                                              messageList =
+                                                  new[]
+                                                      {
+                                                          new proxyMDM416.message
+                                                              {
+                                                                  comments = "test"
+                                                              }
+                                                      }
+                                          }
+                                  };
+                var response = client2.ODEventNotification(outages, transactionId);
+                PrintClassStdOut.PrintObject(client2.MultiSpeakMsgHeaderValue);
+
+                // We might not get a response, if so exit
+                if (response == null)
+                {
+                    return Successfull;
+                }
+
+                // co-varient array conversion from errorObject[] to object[] can cause runtime error on write operation.
+                // so instead of passing response we paass repsonse.ToArray<object>()
+                PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+                var serializer = new XmlSerializer(typeof(errorObject[]));
+                string xml;
+
+                using (var sww = new StringWriter())
+                {
+                    using (var writer = XmlWriter.Create(sww))
+                    {
+                        serializer.Serialize(writer, response);
+                        xml = sww.ToString();
+                    }
+                }
+
+                XmlUtil.WriteToFile(
+                    xml,
+                    $"ODEventNotification.{options.Device}.{options.EventType}",
+                    "3AC",
+                    logFileDirectory);
+                return xml;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ex.Message;
+            }
+        }
+    
 
         /// <summary>
         /// Get the Connect or Disconnect State from the AMI database, this is not the current state of the meter in the 'real' world
@@ -726,29 +857,320 @@ namespace MultiSpeakClientV30ac
                 return Fail;
             }
 
+            // Data for GMLocation
+            var points = new proxyMDM416.PointType();
+            var coords = new proxyMDM416.CoordType() { X = 2191236.56044671M, Y = 13757840.7320126M, YSpecified = true };
+            points.Item = coords;
+
+            // Example
+            // <outageReasonCodeList>
+            //    <extensions>
+            //        <q1:outageReasonContainer 
+            //            xmlns:q1="http://www.multispeak.org/Version_4.1_Release">
+            //            <q1:outageReasonList>
+            //                <q1:outageReasonItem>
+            //                    <q1:category>Cause</q1:category>
+            //                    <q1:outageReason>
+            //                        <q1:description>Animal</q1:description>
+            //                        <q1:outageReportingCodeList>
+            //                            <q1:outageReportingCode>020</q1:outageReportingCode>
+            //                        </q1:outageReportingCodeList>
+            //                    </q1:outageReason>
+            //                </q1:outageReasonItem>
+            //                <q1:outageReasonItem>
+            //                    <q1:category>Weather Condition</q1:category>
+            //                    <q1:outageReason>
+            //                        <q1:description>Extreme Heat</q1:description>
+            //                        <q1:outageReportingCodeList>
+            //                            <q1:outageReportingCode>030</q1:outageReportingCode>
+            //                        </q1:outageReportingCodeList>
+            //                    </q1:outageReason>
+            //                </q1:outageReasonItem>
+            //            </q1:outageReasonList>
+            //        </q1:outageReasonContainer>
+            //    </extensions>
+            // </outageReasonCodeList>
+            var outagereasoncontainer = new proxyMDM416.outageReasonContainer
+            {
+                // TODO: MAYBE - Milsoft has ns on the xml elements
+                //  xmlns:q1="http://www.multispeak.org/Version_4.1_Release"
+                outageReasonList = new proxyMDM416.outageReasonItem[]
+                {
+                    new proxyMDM416.outageReasonItem
+                    {
+                        category = "Weather Condition",
+                        outageReason = new proxyMDM416.outageReason()
+                        {
+                            description = "Extreme Heat",
+                            outageReportingCodeList = new proxyMDM416.outageReportingCode[]
+                            {
+                                new proxyMDM416.outageReportingCode
+                                {
+                                    Value = "030"
+                                }
+                            }
+                        }
+                    },
+                    new proxyMDM416.outageReasonItem
+                    {
+                        category = "Cause",
+                        outageReason = new proxyMDM416.outageReason()
+                        {
+                            description = "Animal",
+                            outageReportingCodeList = new proxyMDM416.outageReportingCode[]
+                            {
+                                new proxyMDM416.outageReportingCode
+                                {
+                                    Value = "020"
+                                }
+                            }
+                        }
+                    }
+                },              
+            };
+
+            // Convert the the  outagereasoncontainer to XmlElement
+            XmlElement[] xmlElements = new XmlElement[1];
+            XmlDocument doc = new XmlDocument();
+            using (XmlWriter writer = doc.CreateNavigator().AppendChild())
+            {
+                new XmlSerializer(outagereasoncontainer.GetType()).Serialize(writer, outagereasoncontainer);
+            }
+
+            xmlElements[0] = doc.DocumentElement;
+
             var outageEvents = new[]
                                    {
                                        new proxyMDM416.outageEvent
                                        {
-                                           message = new proxyMDM416.message
-                                           {
-                                               comments = "Comments rom test app",
-                                               errorString = "Error String from test app"
-                                           },
-                                           actualFault = "Actual Fault from test app",
-                                           area = "Area of the outage",
-                                           comments = "Comments from root object",
+                                           objectID = "2017-10-27-0003",
+                                           extensionsList = new[]
+                                                                {
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "isClosed",
+                                                                            extValue = new extValue { Value = "True" },
+                                                                            extType  = extType.boolean,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "substationName",
+                                                                            extValue = new extValue { Value = "PARKWAY_T2" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "feederCode",
+                                                                            extValue = new extValue { Value = "3" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "phaseCode",
+                                                                            extValue = new extValue { Value = "B" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "statusPhaseB",
+                                                                            extValue = new extValue { Value = "NormalOrRestored" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                },
+                                           objectName = "T61563680002",
+
+                                           GMLLocation = points,
+                                           GPSLocation = new proxyMDM416.GPSLocation() { GPSValidity = true, GPSValiditySpecified = true, latitude = 29.576805699162243, longitude = -98.299250294859718 } ,
+                                           gridLocation = "61563680",
+                                           area = "West",
+                                           problemLocation = "T61563680002",
+                                           deviceID = new proxyMDM416.objectRef()
+                                                          {
+                                                              name = "T61563680002",
+                                                              noun  = new XmlQualifiedName("transformerBank"),
+                                                              objectID = "86101734-89a6-11e6-90e7-1866da2dc956"
+                                                          },
+                                           deviceType = "Transformer",
+                                           outagedPhase = proxyMDM416.phaseCode.B,
+                                           substationCode = "60",
+                                           feeder = "P301",
+                                           outageStatus = proxyMDM416.outageStatus.Restored,
+                                           startTime = DateTime.Now.AddHours(-3),
+                                           startTimeSpecified = true,
                                            completed = DateTime.Now,
                                            completedSpecified = true,
-                                           crewActionEvents = new proxyMDM416.crewActionEvent[] { },
-                                           crewsDispatched = new[] { "Crew 1", "Crew 2" },
-                                           customersAffected = "100",
+                                           customersAffected = "6",
+                                           priorityCustomersCount = "0",
+                                           ODEventCount = "1",
+                                           customersRestored = "1",
+
+                                           outageReasonCodeList = new proxyMDM416.outageReasonCodeList()
+                                                                      {
+                                                                          extensions = new proxyMDM416.extensions()
+                                                                          {
+                                                                              Any = xmlElements
+                                                                          }
+                                                                      },
+                                       },
+
+                                       new proxyMDM416.outageEvent
+                                       {
+                                           objectID = "2017-10-27-0002",
+                                           extensionsList = new[]
+                                                                {
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "substationName",
+                                                                            extValue = new extValue { Value = "PARKWAY_T2" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "feederCode",
+                                                                            extValue = new extValue { Value = "3" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "phaseCode",
+                                                                            extValue = new extValue { Value = "B" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "statusPhaseB",
+                                                                            extValue = new extValue { Value = "NormalOrRestored" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                },
+                                           objectName = "T61563680002",
+
+                                           GMLLocation = points,
+                                           GPSLocation = new proxyMDM416.GPSLocation() { GPSValidity = true, GPSValiditySpecified = true, latitude = 29.576805699162243, longitude = -98.299250294859718 } ,
+                                           gridLocation = "61563680",
+                                           area = "West",
+                                           problemLocation = "T61563680002",
+                                           deviceID = new proxyMDM416.objectRef()
+                                                          {
+                                                              name = "T61563680002",
+                                                              noun  = new XmlQualifiedName("transformerBank"),
+                                                              objectID = "86101734-89a6-11e6-90e7-1866da2dc956"
+                                                          },
+                                           deviceType = "Transformer",
+                                           outagedPhase = proxyMDM416.phaseCode.B,
+                                           substationCode = "60",
+                                           feeder = "P301",
+                                           outageStatus = proxyMDM416.outageStatus.Restored,
                                            startTime = DateTime.Now.AddHours(-3),
-                                           startTimeSpecified = true 
+                                           startTimeSpecified = true,
+                                           completed = DateTime.Now,
+                                           completedSpecified = true,
+                                           customersAffected = "6",
+                                           priorityCustomersCount = "0",
+                                           ODEventCount = "1",
+                                           customersRestored = "1",
+                                           //outageReasonCodeList = new proxyMDM416.outageReasonCodeList()
+                                           //{
+                                           //    extensions = new proxyMDM416.extensions()
+                                           //    {
+                                           //        Any = xmlElements
+                                           //    }
+                                           //},
+                                       },
+                                       new proxyMDM416.outageEvent
+                                       {
+                                           objectID = "2017-10-27-0002",
+                                           verb = proxyMDM416.action.Delete,
+                                           comments = @"1 associated calls deleted
+                                                          -----------------------------------------
+                                                      Oct 27 2017  1:46PM
+                                           OutageRecID: 2017 - 10 - 27 - 0002 discarded from DisSpatch | Outage Events by Dispatcher: LUIS2016\Administrator </ comments >
+                                           ",
+                                           extensionsList = new[]
+                                                                {
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "substationName",
+                                                                            extValue = new extValue { Value = "PARKWAY_T2" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "feederCode",
+                                                                            extValue = new extValue { Value = "3" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "phaseCode",
+                                                                            extValue = new extValue { Value = "B" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                    new proxyMDM416.extensionsItem
+                                                                        {
+                                                                            extName = "statusPhaseB",
+                                                                            extValue = new extValue { Value = "NormalOrRestored" },
+                                                                            extType  = extType.@string,
+                                                                            extTypeSpecified = true
+                                                                        },
+                                                                },
+                                           objectName = "T61563680002",
+                                           GMLLocation = points,
+                                           GPSLocation = new proxyMDM416.GPSLocation() { GPSValidity = true, GPSValiditySpecified = true, latitude = 29.576805699162243, longitude = -98.299250294859718 } ,
+                                           gridLocation = "61563680",
+                                           area = "West",
+                                           problemLocation = "T61563680002",
+                                           deviceID = new proxyMDM416.objectRef()
+                                                          {
+                                                              name = "T61563680002",
+                                                              noun  = new XmlQualifiedName("transformer"),
+                                                              objectID = "86101734-89a6-11e6-90e7-1866da2dc956"
+                                                          },
+                                           deviceType = "Transformer",
+                                           outagedPhase = proxyMDM416.phaseCode.B,
+                                           substationCode = "60",
+                                           feeder = "P301",
+                                           outageStatus = proxyMDM416.outageStatus.Restored,
+                                           startTime = DateTime.Now.AddHours(-3),
+                                           startTimeSpecified = true,
+                                           completed = DateTime.Now,
+                                           completedSpecified = true,
+                                           customersAffected = "6",
+                                           priorityCustomersCount = "0",
+                                           ODEventCount = "1",
+                                           customersRestored = "1",
+                                           outageReasonCodeList = new proxyMDM416.outageReasonCodeList()
+                                           {
+                                               extensions = new proxyMDM416.extensions()
+                                               {
+                                                   Any = xmlElements
+                                               }
+                                           },
                                        }
                                    };
+            proxyMDM416.errorObject[] response = null;
+            for (var i = 0; i < 100000; i++)
+            {
+                // reset a value for error checking the loaded data 
+                outageEvents[0].ODEventCount = i.ToString();
+                outageEvents[1].ODEventCount = i.ToString();
+                outageEvents[2].ODEventCount = i.ToString();
+                response = client.OutageEventChangedNotification(outageEvents);
 
-            var response = client.OutageEventChangedNotification(outageEvents);
+            }
+
             if (response == null)
             {
                 return Successfull;

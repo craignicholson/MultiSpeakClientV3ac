@@ -22,7 +22,7 @@ namespace MultiSpeakClientV30ac
         /// The directory where the output files will be written, output being the results from Gets and Errors.
         /// TODO: FIX THIS - MAKE IT CONFIGURATION
         /// </summary>
-        private const string FileDirectory = @"C:\CSharp\source\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\Milsoft";
+        private const string FileDirectory = @"C:\Users\craig\source\repos\MultiSpeakClientV30ac\MultiSpeakClientV30ac\bin\Debug\Milsoft";
 
         /// <summary>
         /// The MultiSpeak Message Header .Version, Version of MultiSpeak

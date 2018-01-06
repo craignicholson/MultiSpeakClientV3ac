@@ -934,7 +934,7 @@ namespace MultiSpeakClientV30ac
                 {
                     new outageDetectionEvent
                     {
-                        eventTime = DateTime.UtcNow,
+                        eventTime = DateTime.Now.AddHours(-1),
                         eventTimeSpecified = true,
                         outageEventType = outEventType,
                         outageEventTypeSpecified = true,

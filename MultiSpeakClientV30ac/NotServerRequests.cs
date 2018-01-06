@@ -117,6 +117,12 @@ namespace MultiSpeakClientV30ac
                 // Goals keep the Methods in alpha order.
                 switch (options.Method)
                 {
+                    case "GetMethods":
+                        message = GetMethods(client, options);
+                        break;
+                    case "PingURL":
+                        message = PingUrl(client, options);
+                        break;
                     case "OutageEventChangedNotification":
                         message = OutageEventChangedNotification(client, options);
                         break;
@@ -144,6 +150,76 @@ namespace MultiSpeakClientV30ac
                     message = ex.InnerException.Message;
                 }
             }
+        }
+
+        /// <summary>
+        /// GetMethods is the call to be
+        /// </summary>
+        /// <param name="client">the client</param>
+        /// <param name="options">the options</param>
+        /// <returns>error or success message</returns>
+        private static string GetMethods(NOT_Server client, Options options)
+        {
+            var response = client.GetMethods();
+            if (response == null)
+            {
+                return Successfull;
+            }
+
+            var serializer = new XmlSerializer(typeof(string[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            PrintClassStdOut.PrintObject(response.ToArray<object>());
+            foreach (var method in response)
+            {
+                Console.WriteLine(method);
+            }
+            XmlUtil.WriteToFile(xml, $"GetMethods.", "416", logFileDirectory);
+            return xml;
+        }
+
+        /// <summary>
+        /// The ping url.
+        /// </summary>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        /// <param name="options">
+        /// The options.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string PingUrl(NOT_Server client, Options options)
+        {
+            var response = client.PingURL();
+            if (response == null)
+            {
+                return Successfull;
+            }
+
+            var serializer = new XmlSerializer(typeof(errorObject[]));
+            string xml;
+            using (var sww = new StringWriter())
+            {
+                using (var writer = XmlWriter.Create(sww))
+                {
+                    serializer.Serialize(writer, response);
+                    xml = sww.ToString();
+                }
+            }
+
+            PrintClassStdOut.ErrorObjects(response.ToArray<object>());
+            XmlUtil.WriteToFile(xml, $"PingUrl.ERROR", "416", logFileDirectory);
+            return xml;
         }
 
         /// <summary>
@@ -266,34 +342,34 @@ namespace MultiSpeakClientV30ac
                                               {
                                                   new outageEvent
                                                       {
-                                                         message = null,
-                                                         extensionsList = null,
-                                                         AnyAttr = null,
-                                                         comments = null,
-                                                         extensions = null,
-                                                         errorString = null,
-                                                         objectID = null,
+                                                         message = new message { comments = "this is test", errorString = "this test errorstring" },
+                                                         //extensionsList = null,
+                                                         //AnyAttr = null,
+                                                         comments = "root comments",
+                                                         //extensions = null,
+                                                         errorString = "root errorString",
+                                                         objectID = DateTime.Now.Millisecond.ToString(),
                                                          verb = action.New,
-                                                         deviceID = null,
-                                                         facilityID = null,
-                                                         gridLocation = null,
-                                                         replaceID = null,
+                                                         deviceID = new objectRef { name = "Device", objectID = "asdfgh", utility = "ETSS" },
+                                                         facilityID = "FacilityID",
+                                                         gridLocation = "GridLocation",
+                                                         replaceID = "replaceID",
                                                          ETOR = DateTime.Now,
                                                          ETORSpecified = true,
-                                                         GMLLocation = null,
-                                                         GPSLocation = null,
-                                                         ODEventCount = null,
-                                                         actualFault = null,
-                                                         area = null,
+                                                         //GMLLocation = null,
+                                                         //GPSLocation = null,
+                                                         ODEventCount = "1",
+                                                         actualFault = "actualFault",
+                                                         //area = null,
                                                          completed = DateTime.Now,
                                                          completedSpecified = true,
-                                                         crewActionEvents = null,
-                                                         crewsDispatched = null,
-                                                         customersAffected = null,
-                                                         customersRestored = null,
-                                                         deviceType = null,
-                                                         faultType = null,
-                                                         feeder = null,
+                                                         //crewActionEvents = null,
+                                                         //crewsDispatched = null,
+                                                         customersAffected = "1",
+                                                         customersRestored = "1",
+                                                         deviceType = "electric",
+                                                         faultType = "Car hit Pole",
+                                                         feeder = "feeder 12",
                                                          startTime = DateTime.Now.AddHours(-2),
                                                          startTimeSpecified = true,
                                                       }
